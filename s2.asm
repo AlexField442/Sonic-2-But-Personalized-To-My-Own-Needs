@@ -24513,7 +24513,7 @@ teleport_swap_table:
 	TeleportTableEntry	Camera_X_pos_last,        Camera_X_pos_last_P2
 	TeleportTableEntry	Obj_respawn_index,        Obj_respawn_index_P2
 	TeleportTableEntry	Object_Manager_Addresses, Object_Manager_Addresses_P2
-	TeleportTableEntry	Sonic_Speeds,             Tails_Speeds\
+	TeleportTableEntry	Sonic_Speeds,             Tails_Speeds
 	TeleportTableEntry	Bumper_Manager_Addresses, Bumper_Manager_Addresses_P2
 	TeleportTableEntry	Camera_Positions,         Camera_Positions_P2
 	TeleportTableEntry	Camera_X_pos_coarse,      Camera_X_pos_coarse_P2
