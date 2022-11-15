@@ -24513,8 +24513,7 @@ teleport_swap_table:
 	TeleportTableEntry	Camera_X_pos_last,        Camera_X_pos_last_P2
 	TeleportTableEntry	Obj_respawn_index,        Obj_respawn_index_P2
 	TeleportTableEntry	Object_Manager_Addresses, Object_Manager_Addresses_P2
-	TeleportTableEntry	Sonic_Speeds,             Tails_Speeds
-	TeleportTableEntry	Ring_Manager_Addresses,   Ring_Manager_Addresses_P2
+	TeleportTableEntry	Sonic_Speeds,             Tails_Speeds\
 	TeleportTableEntry	Bumper_Manager_Addresses, Bumper_Manager_Addresses_P2
 	TeleportTableEntry	Camera_Positions,         Camera_Positions_P2
 	TeleportTableEntry	Camera_X_pos_coarse,      Camera_X_pos_coarse_P2
@@ -29091,7 +29090,6 @@ RingsManager_Init:
 	cmp.w	2(a1),d4	; is the X pos of the ring < camera X pos?
 	bhi.s	-		; if it is, check next ring
 	move.w	a1,(Ring_start_addr).w	; set start addresses
-	move.w	a1,(Ring_start_addr_P2).w
 	addi.w	#320+16,d4	; advance by a screen
 	bra.s	+
 -
@@ -29100,7 +29098,6 @@ RingsManager_Init:
 	cmp.w	2(a1),d4	; is the X pos of the ring < camera X + 336?
 	bhi.s	-		; if it is, check next ring
 	move.w	a1,(Ring_end_addr).w	; set end addresses
-	move.w	a1,(Ring_end_addr_P2).w
 	rts
 ; ===========================================================================
 ; loc_16FDE:
@@ -29159,8 +29156,6 @@ RingsManager_Main:
 	cmp.w	-4(a2),d4
 	bls.s	-
 	move.w	a2,(Ring_end_addr).w	; update end address
-	move.w	a1,(Ring_start_addr_P2).w	; otherwise, copy over P1 addresses
-	move.w	a2,(Ring_end_addr_P2).w
 	rts
 
 ; ---------------------------------------------------------------------------
@@ -29173,11 +29168,6 @@ RingsManager_Main:
 Touch_Rings:
 	movea.w	(Ring_start_addr).w,a1
 	movea.w	(Ring_end_addr).w,a2
-	cmpa.w	#MainCharacter,a0
-	beq.s	+
-	movea.w	(Ring_start_addr_P2).w,a1
-	movea.w	(Ring_end_addr_P2).w,a2
-+
 	cmpa.l	a1,a2	; are there no rings in this area?
 	beq.w	Touch_Rings_Done	; if so, return
 	cmpi.w	#$5A,invulnerable_time(a0)
