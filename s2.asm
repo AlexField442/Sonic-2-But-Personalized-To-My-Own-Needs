@@ -29120,7 +29120,7 @@ RingsManager_Main:
 	cmpi.b	#8,1(a1); is it destruction time yet?
 	bne.s	+	; if not, branch
 	move.w	#-1,(a1); destroy ring
-	move.w	#0,-2(a2)	; clear ring entry
+	clr.w	-2(a2)	; clear ring entry
 	subq.w	#1,(Ring_consumption_table).w	; subtract count
 +	dbf	d1,-	; repeat for all rings in table
 +
@@ -29265,36 +29265,23 @@ Touch_ConsumeRing:
 BuildRings:
 	movea.w	(Ring_start_addr).w,a0
 	movea.w	(Ring_end_addr).w,a4
-	cmpa.l	a0,a4	; are there any rings on-screen?
-	bne.s	+	; if there are, branch
-	rts		; otherwise, return
-+
+	cmpa.l	a0,a4		; are there any rings on-screen?
+	beq.s	BuildRings_End	; if there aren't, branch ; AF: save slightly on CPU cycles by inverting this branch
 	lea	(Camera_X_pos).w,a3
+
 ; loc_1718A:
 BuildRings_Loop:
 	tst.w	(a0)		; has this ring been consumed?
-	bmi.w	BuildRings_NextRing	; if it has, branch
+	bmi.s	BuildRings_NextRing	; if it has, branch
 	move.w	2(a0),d3	; get ring X pos
 	sub.w	(a3),d3		; subtract camera X pos
 	addi.w	#128,d3		; screen top is 128x128 not 0x0
 	move.w	4(a0),d2	; get ring Y pos
 	sub.w	4(a3),d2	; subtract camera Y pos
-    if fixBugs
-	addi_.w	#8,d2
-	andi.w	#$7FF,d2
-    else
-	; Note that this 'andi' occurs *before* an 'addi'. This can cause
-	; 'd2' to wrap incorrectly. This defect is the reason why rings
-	; disappear when they go halfway off the top of the screen.
-	andi.w	#$7FF,d2
-	addi_.w	#8,d2
-    endif
-	; This line is completely redundant: an apparent leftover from one of the
-	; prototypes, back when the above 'andi' didn't exist. S3K gets rid of this.
-	bmi.s	BuildRings_NextRing
+	addi_.w	#8,d2			; AF: these lines are swapped to prevent rings from disappearing
+	andi.w	#$7FF,d2		; when they go halfway off the top of the screen
 	cmpi.w	#224+8*2,d2
-	; The above 'andi' means that this could just be a plain 'bhs'. S3K does this.
-	bge.s	BuildRings_NextRing	; if the ring is not on-screen, branch
+	bhs.s	BuildRings_NextRing	; AF: changed from bge.s, which S3K does
 	addi.w	#128-8,d2
 	lea	(MapUnc_Rings).l,a1
 	moveq	#0,d1
@@ -29302,8 +29289,10 @@ BuildRings_Loop:
 	bne.s	+		; if this ring is using a specific frame, branch
 	move.b	(Rings_anim_frame).w,d1	; use global frame
 +
-	add.w	d1,d1
-	adda.w	(a1,d1.w),a1	; get frame data address
+	; AF: S3K completely removes the need for a sprite header (since all the
+	; mappings are 8 bytes already), so we just divide the value instead
+	lsl.w	#3,d1
+	lea	(a1,d1.w),a1	; get frame data address
 	move.b	(a1)+,d0	; get Y offset
 	ext.w	d0
 	add.w	d2,d0		; add Y offset to Y pos
@@ -29323,6 +29312,8 @@ BuildRings_NextRing:
 	lea	6(a0),a0
 	cmpa.l	a0,a4
 	bne.w	BuildRings_Loop
+
+BuildRings_End:
 	rts
 
 ; ---------------------------------------------------------------------------
@@ -29430,21 +29421,11 @@ RingsMgr_SortRings:
 ; Custom mappings format. Compare to Obj25_MapUnc_12382.
 
 ; Differences include...
+;  No offset table (each sprite assumed to be 8 bytes)
 ;  No 'sprite pieces per frame' value (hardcoded to 1)
 
-; This was customised even further in Sonic 3 & Knuckles.
-
 ; off_1736A:
-MapUnc_Rings: offsetTable
-	offsetTableEntry.w .frame1
-	offsetTableEntry.w .frame2
-	offsetTableEntry.w .frame3
-	offsetTableEntry.w .frame4
-	offsetTableEntry.w .frame5
-	offsetTableEntry.w .frame6
-	offsetTableEntry.w .frame7
-	offsetTableEntry.w .frame8
-
+MapUnc_Rings:
 .frame1:
 	dc.b -8
 	dc.b  5
