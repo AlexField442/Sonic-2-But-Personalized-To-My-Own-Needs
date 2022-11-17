@@ -3630,6 +3630,7 @@ PalPtr_OOZ_B:	palptr Pal_OOZ_B, 1
 PalPtr_Menu:	palptr Pal_Menu,  0
 PalPtr_Result:	palptr Pal_Result,0
 
+	align $200	; AF: apparently you need this to prevent alignment errors
 ; ----------------------------------------------------------------------------
 ; This macro defines Pal_ABC and Pal_ABC_End, so palptr can compute the size of
 ; the palette automatically
@@ -18684,9 +18685,9 @@ loadLevelLayout:
 	moveq	#0,d0
 	move.w	(Current_ZoneAndAct).w,d0
 	ror.b	#1,d0
-	lsr.w	#6,d0
+	lsr.w	#5,d0
 	lea	(Off_Level).l,a0
-	move.w	(a0,d0.w),d0
+	move.l	(a0,d0.w),d0
 	lea	(a0,d0.l),a0
 	lea	(Level_Layout).w,a1
 	jmpto	KosDec, JmpTo_KosDec
@@ -29331,9 +29332,9 @@ RingsManager_Setup:
 	moveq	#0,d0
 	move.w	(Current_ZoneAndAct).w,d0
 	ror.b	#1,d0
-	lsr.w	#6,d0
+	lsr.w	#5,d0
 	lea	(Off_Rings).l,a1
-	move.w	(a1,d0.w),d0
+	move.l	(a1,d0.w),d0
 	lea	(a1,d0.w),a1
 	lea	(Ring_Positions+6).w,a2	; first ring is left blank
 ; loc_172E0:
@@ -30008,10 +30009,10 @@ ObjectsManager_Init:
 	addq.b	#2,(Obj_placement_routine).w
 	move.w	(Current_ZoneAndAct).w,d0 ; If level == $0F01 (ARZ 2)...
 	ror.b	#1,d0			; then this yields $0F80...
-	lsr.w	#6,d0			; and this yields $003E.
+	lsr.w	#5,d0			; and this yields $003E.
 	lea	(Off_Objects).l,a0	; Next, we load the first pointer in the object layout list pointer index,
 	movea.l	a0,a1			; then copy it for quicker use later.
-	adda.w	(a0,d0.w),a0		; (Point1 * 2) + $003E
+	adda.l	(a0,d0.w),a0		; (Point1 * 2) + $003E
 	; initialize each object load address with the first object in the layout
 	move.l	a0,(Obj_load_addr_right).w
 	move.l	a0,(Obj_load_addr_left).w
@@ -86481,41 +86482,41 @@ ColP_Invalid:
 ; Two entries per zone, pointing to the level layouts for acts 1 and 2 of each zone
 ; respectively.
 ;---------------------------------------------------------------------------------------
-Off_Level: zoneOrderedOffsetTable 2,2
-	zoneOffsetTableEntry.w Level_EHZ1
-	zoneOffsetTableEntry.w Level_EHZ2	; 1
-	zoneOffsetTableEntry.w Level_EHZ1	; 2
-	zoneOffsetTableEntry.w Level_EHZ1	; 3
-	zoneOffsetTableEntry.w Level_EHZ1	; 4
-	zoneOffsetTableEntry.w Level_EHZ1	; 5
-	zoneOffsetTableEntry.w Level_EHZ1	; 6
-	zoneOffsetTableEntry.w Level_EHZ1	; 7
-	zoneOffsetTableEntry.w Level_MTZ1	; 8
-	zoneOffsetTableEntry.w Level_MTZ2	; 9
-	zoneOffsetTableEntry.w Level_MTZ3	; 10
-	zoneOffsetTableEntry.w Level_MTZ3	; 11
-	zoneOffsetTableEntry.w Level_WFZ	; 12
-	zoneOffsetTableEntry.w Level_WFZ	; 13
-	zoneOffsetTableEntry.w Level_HTZ1	; 14
-	zoneOffsetTableEntry.w Level_HTZ2	; 15
-	zoneOffsetTableEntry.w Level_HPZ1	; 16
-	zoneOffsetTableEntry.w Level_HPZ1	; 17
-	zoneOffsetTableEntry.w Level_EHZ1	; 18
-	zoneOffsetTableEntry.w Level_EHZ1	; 19
-	zoneOffsetTableEntry.w Level_OOZ1	; 20
-	zoneOffsetTableEntry.w Level_OOZ2	; 21
-	zoneOffsetTableEntry.w Level_MCZ1	; 22
-	zoneOffsetTableEntry.w Level_MCZ2	; 23
-	zoneOffsetTableEntry.w Level_CNZ1	; 24
-	zoneOffsetTableEntry.w Level_CNZ2	; 25
-	zoneOffsetTableEntry.w Level_CPZ1	; 26
-	zoneOffsetTableEntry.w Level_CPZ2	; 27
-	zoneOffsetTableEntry.w Level_DEZ	; 28
-	zoneOffsetTableEntry.w Level_DEZ	; 29
-	zoneOffsetTableEntry.w Level_ARZ1	; 30
-	zoneOffsetTableEntry.w Level_ARZ2	; 31
-	zoneOffsetTableEntry.w Level_SCZ	; 32
-	zoneOffsetTableEntry.w Level_SCZ	; 33
+Off_Level: zoneOrderedOffsetTable 4,2
+	zoneOffsetTableEntry.l Level_EHZ1
+	zoneOffsetTableEntry.l Level_EHZ2	; 1
+	zoneOffsetTableEntry.l Level_EHZ1	; 2
+	zoneOffsetTableEntry.l Level_EHZ1	; 3
+	zoneOffsetTableEntry.l Level_EHZ1	; 4
+	zoneOffsetTableEntry.l Level_EHZ1	; 5
+	zoneOffsetTableEntry.l Level_EHZ1	; 6
+	zoneOffsetTableEntry.l Level_EHZ1	; 7
+	zoneOffsetTableEntry.l Level_MTZ1	; 8
+	zoneOffsetTableEntry.l Level_MTZ2	; 9
+	zoneOffsetTableEntry.l Level_MTZ3	; 10
+	zoneOffsetTableEntry.l Level_MTZ3	; 11
+	zoneOffsetTableEntry.l Level_WFZ	; 12
+	zoneOffsetTableEntry.l Level_WFZ	; 13
+	zoneOffsetTableEntry.l Level_HTZ1	; 14
+	zoneOffsetTableEntry.l Level_HTZ2	; 15
+	zoneOffsetTableEntry.l Level_HPZ1	; 16
+	zoneOffsetTableEntry.l Level_HPZ1	; 17
+	zoneOffsetTableEntry.l Level_EHZ1	; 18
+	zoneOffsetTableEntry.l Level_EHZ1	; 19
+	zoneOffsetTableEntry.l Level_OOZ1	; 20
+	zoneOffsetTableEntry.l Level_OOZ2	; 21
+	zoneOffsetTableEntry.l Level_MCZ1	; 22
+	zoneOffsetTableEntry.l Level_MCZ2	; 23
+	zoneOffsetTableEntry.l Level_CNZ1	; 24
+	zoneOffsetTableEntry.l Level_CNZ2	; 25
+	zoneOffsetTableEntry.l Level_CPZ1	; 26
+	zoneOffsetTableEntry.l Level_CPZ2	; 27
+	zoneOffsetTableEntry.l Level_DEZ	; 28
+	zoneOffsetTableEntry.l Level_DEZ	; 29
+	zoneOffsetTableEntry.l Level_ARZ1	; 30
+	zoneOffsetTableEntry.l Level_ARZ2	; 31
+	zoneOffsetTableEntry.l Level_SCZ	; 32
+	zoneOffsetTableEntry.l Level_SCZ	; 33
     zoneTableEnd
 ;---------------------------------------------------------------------------------------
 ; EHZ act 1 level layout (Kosinski compression)
@@ -88119,41 +88120,41 @@ MiscKoz_SpecialObjectLocations:	BINCLUDE	"misc/Special stage object location lis
 ;  The first commented number on each line is an array index; the second is the
 ;  associated zone.
 ;--------------------------------------------------------------------------------------
-Off_Rings: zoneOrderedOffsetTable 2,2
-	zoneOffsetTableEntry.w  Rings_EHZ_1	; 0  $00
-	zoneOffsetTableEntry.w  Rings_EHZ_2	; 1
-	zoneOffsetTableEntry.w  Rings_Lev1_1	; 2  $01
-	zoneOffsetTableEntry.w  Rings_Lev1_2	; 3
-	zoneOffsetTableEntry.w  Rings_Lev2_1	; 4  $02
-	zoneOffsetTableEntry.w  Rings_Lev2_2	; 5
-	zoneOffsetTableEntry.w  Rings_Lev3_1	; 6  $03
-	zoneOffsetTableEntry.w  Rings_Lev3_2	; 7
-	zoneOffsetTableEntry.w  Rings_MTZ_1	; 8  $04
-	zoneOffsetTableEntry.w  Rings_MTZ_2	; 9
-	zoneOffsetTableEntry.w  Rings_MTZ_3	; 10 $05
-	zoneOffsetTableEntry.w  Rings_MTZ_4	; 11
-	zoneOffsetTableEntry.w  Rings_WFZ_1	; 12 $06
-	zoneOffsetTableEntry.w  Rings_WFZ_2	; 13
-	zoneOffsetTableEntry.w  Rings_HTZ_1	; 14 $07
-	zoneOffsetTableEntry.w  Rings_HTZ_2	; 15
-	zoneOffsetTableEntry.w  Rings_HPZ_1	; 16 $08
-	zoneOffsetTableEntry.w  Rings_HPZ_2	; 17
-	zoneOffsetTableEntry.w  Rings_Lev9_1	; 18 $09
-	zoneOffsetTableEntry.w  Rings_Lev9_2	; 19
-	zoneOffsetTableEntry.w  Rings_OOZ_1	; 20 $0A
-	zoneOffsetTableEntry.w  Rings_OOZ_2	; 21
-	zoneOffsetTableEntry.w  Rings_MCZ_1	; 22 $0B
-	zoneOffsetTableEntry.w  Rings_MCZ_2	; 23
-	zoneOffsetTableEntry.w  Rings_CNZ_1	; 24 $0C
-	zoneOffsetTableEntry.w  Rings_CNZ_2	; 25
-	zoneOffsetTableEntry.w  Rings_CPZ_1	; 26 $0D
-	zoneOffsetTableEntry.w  Rings_CPZ_2	; 27
-	zoneOffsetTableEntry.w  Rings_DEZ_1	; 28 $0E
-	zoneOffsetTableEntry.w  Rings_DEZ_2	; 29
-	zoneOffsetTableEntry.w  Rings_ARZ_1	; 30 $0F
-	zoneOffsetTableEntry.w  Rings_ARZ_2	; 31
-	zoneOffsetTableEntry.w  Rings_SCZ_1	; 32 $10
-	zoneOffsetTableEntry.w  Rings_SCZ_2	; 33
+Off_Rings: zoneOrderedOffsetTable 4,2
+	zoneOffsetTableEntry.l  Rings_EHZ_1	; 0  $00
+	zoneOffsetTableEntry.l  Rings_EHZ_2	; 1
+	zoneOffsetTableEntry.l  Rings_Lev1_1	; 2  $01
+	zoneOffsetTableEntry.l  Rings_Lev1_2	; 3
+	zoneOffsetTableEntry.l  Rings_Lev2_1	; 4  $02
+	zoneOffsetTableEntry.l  Rings_Lev2_2	; 5
+	zoneOffsetTableEntry.l  Rings_Lev3_1	; 6  $03
+	zoneOffsetTableEntry.l  Rings_Lev3_2	; 7
+	zoneOffsetTableEntry.l  Rings_MTZ_1	; 8  $04
+	zoneOffsetTableEntry.l  Rings_MTZ_2	; 9
+	zoneOffsetTableEntry.l  Rings_MTZ_3	; 10 $05
+	zoneOffsetTableEntry.l  Rings_MTZ_4	; 11
+	zoneOffsetTableEntry.l  Rings_WFZ_1	; 12 $06
+	zoneOffsetTableEntry.l  Rings_WFZ_2	; 13
+	zoneOffsetTableEntry.l  Rings_HTZ_1	; 14 $07
+	zoneOffsetTableEntry.l  Rings_HTZ_2	; 15
+	zoneOffsetTableEntry.l  Rings_HPZ_1	; 16 $08
+	zoneOffsetTableEntry.l  Rings_HPZ_2	; 17
+	zoneOffsetTableEntry.l  Rings_Lev9_1	; 18 $09
+	zoneOffsetTableEntry.l  Rings_Lev9_2	; 19
+	zoneOffsetTableEntry.l  Rings_OOZ_1	; 20 $0A
+	zoneOffsetTableEntry.l  Rings_OOZ_2	; 21
+	zoneOffsetTableEntry.l  Rings_MCZ_1	; 22 $0B
+	zoneOffsetTableEntry.l  Rings_MCZ_2	; 23
+	zoneOffsetTableEntry.l  Rings_CNZ_1	; 24 $0C
+	zoneOffsetTableEntry.l  Rings_CNZ_2	; 25
+	zoneOffsetTableEntry.l  Rings_CPZ_1	; 26 $0D
+	zoneOffsetTableEntry.l  Rings_CPZ_2	; 27
+	zoneOffsetTableEntry.l  Rings_DEZ_1	; 28 $0E
+	zoneOffsetTableEntry.l  Rings_DEZ_2	; 29
+	zoneOffsetTableEntry.l  Rings_ARZ_1	; 30 $0F
+	zoneOffsetTableEntry.l  Rings_ARZ_2	; 31
+	zoneOffsetTableEntry.l  Rings_SCZ_1	; 32 $10
+	zoneOffsetTableEntry.l  Rings_SCZ_2	; 33
     zoneTableEnd
 
 Rings_EHZ_1:	BINCLUDE	"level/rings/EHZ_1.bin"
@@ -88199,41 +88200,41 @@ Rings_SCZ_2:	BINCLUDE	"level/rings/SCZ_2.bin"
 ; --------------------------------------------------------------------------------------
 ; Offset index of object locations
 ; --------------------------------------------------------------------------------------
-Off_Objects: zoneOrderedOffsetTable 2,2
-	zoneOffsetTableEntry.w  Objects_EHZ_1	; 0  $00
-	zoneOffsetTableEntry.w  Objects_EHZ_2	; 1
-	zoneOffsetTableEntry.w  Objects_Null	; 2  $01
-	zoneOffsetTableEntry.w  Objects_Null	; 3
-	zoneOffsetTableEntry.w  Objects_Null	; 4  $02
-	zoneOffsetTableEntry.w  Objects_Null	; 5
-	zoneOffsetTableEntry.w  Objects_Null	; 6  $03
-	zoneOffsetTableEntry.w  Objects_Null	; 7
-	zoneOffsetTableEntry.w  Objects_MTZ_1	; 8  $04
-	zoneOffsetTableEntry.w  Objects_MTZ_2	; 9
-	zoneOffsetTableEntry.w  Objects_MTZ_3	; 10 $05
-	zoneOffsetTableEntry.w  Objects_MTZ_3	; 11
-	zoneOffsetTableEntry.w  Objects_WFZ_1	; 12 $06
-	zoneOffsetTableEntry.w  Objects_WFZ_2	; 13
-	zoneOffsetTableEntry.w  Objects_HTZ_1	; 14 $07
-	zoneOffsetTableEntry.w  Objects_HTZ_2	; 15
-	zoneOffsetTableEntry.w  Objects_HPZ_1	; 16 $08
-	zoneOffsetTableEntry.w  Objects_HPZ_2	; 17
-	zoneOffsetTableEntry.w  Objects_Null	; 18 $09
-	zoneOffsetTableEntry.w  Objects_Null	; 19
-	zoneOffsetTableEntry.w  Objects_OOZ_1	; 20 $0A
-	zoneOffsetTableEntry.w  Objects_OOZ_2	; 21
-	zoneOffsetTableEntry.w  Objects_MCZ_1	; 22 $0B
-	zoneOffsetTableEntry.w  Objects_MCZ_2	; 23
-	zoneOffsetTableEntry.w  Objects_CNZ_1	; 24 $0C
-	zoneOffsetTableEntry.w  Objects_CNZ_2	; 25
-	zoneOffsetTableEntry.w  Objects_CPZ_1	; 26 $0D
-	zoneOffsetTableEntry.w  Objects_CPZ_2	; 27
-	zoneOffsetTableEntry.w  Objects_DEZ_1	; 28 $0E
-	zoneOffsetTableEntry.w  Objects_DEZ_2	; 29
-	zoneOffsetTableEntry.w  Objects_ARZ_1	; 30 $0F
-	zoneOffsetTableEntry.w  Objects_ARZ_2	; 31
-	zoneOffsetTableEntry.w  Objects_SCZ_1	; 32 $10
-	zoneOffsetTableEntry.w  Objects_SCZ_2	; 33
+Off_Objects: zoneOrderedOffsetTable 4,2
+	zoneOffsetTableEntry.l  Objects_EHZ_1	; 0  $00
+	zoneOffsetTableEntry.l  Objects_EHZ_2	; 1
+	zoneOffsetTableEntry.l  Objects_Null	; 2  $01
+	zoneOffsetTableEntry.l  Objects_Null	; 3
+	zoneOffsetTableEntry.l  Objects_Null	; 4  $02
+	zoneOffsetTableEntry.l  Objects_Null	; 5
+	zoneOffsetTableEntry.l  Objects_Null	; 6  $03
+	zoneOffsetTableEntry.l  Objects_Null	; 7
+	zoneOffsetTableEntry.l  Objects_MTZ_1	; 8  $04
+	zoneOffsetTableEntry.l  Objects_MTZ_2	; 9
+	zoneOffsetTableEntry.l  Objects_MTZ_3	; 10 $05
+	zoneOffsetTableEntry.l  Objects_MTZ_3	; 11
+	zoneOffsetTableEntry.l  Objects_WFZ_1	; 12 $06
+	zoneOffsetTableEntry.l  Objects_WFZ_2	; 13
+	zoneOffsetTableEntry.l  Objects_HTZ_1	; 14 $07
+	zoneOffsetTableEntry.l  Objects_HTZ_2	; 15
+	zoneOffsetTableEntry.l  Objects_HPZ_1	; 16 $08
+	zoneOffsetTableEntry.l  Objects_HPZ_2	; 17
+	zoneOffsetTableEntry.l  Objects_Null	; 18 $09
+	zoneOffsetTableEntry.l  Objects_Null	; 19
+	zoneOffsetTableEntry.l  Objects_OOZ_1	; 20 $0A
+	zoneOffsetTableEntry.l  Objects_OOZ_2	; 21
+	zoneOffsetTableEntry.l  Objects_MCZ_1	; 22 $0B
+	zoneOffsetTableEntry.l  Objects_MCZ_2	; 23
+	zoneOffsetTableEntry.l  Objects_CNZ_1	; 24 $0C
+	zoneOffsetTableEntry.l  Objects_CNZ_2	; 25
+	zoneOffsetTableEntry.l  Objects_CPZ_1	; 26 $0D
+	zoneOffsetTableEntry.l  Objects_CPZ_2	; 27
+	zoneOffsetTableEntry.l  Objects_DEZ_1	; 28 $0E
+	zoneOffsetTableEntry.l  Objects_DEZ_2	; 29
+	zoneOffsetTableEntry.l  Objects_ARZ_1	; 30 $0F
+	zoneOffsetTableEntry.l  Objects_ARZ_2	; 31
+	zoneOffsetTableEntry.l  Objects_SCZ_1	; 32 $10
+	zoneOffsetTableEntry.l  Objects_SCZ_2	; 33
     zoneTableEnd
 
 	; These things act as boundaries for the object layout parser, so it doesn't read past the end/beginning of the file
