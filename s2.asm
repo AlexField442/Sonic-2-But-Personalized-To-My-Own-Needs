@@ -4493,15 +4493,10 @@ MusicList2: zoneOrderedTable 1,1
 ; loc_3EC4:
 Level:
 	bset	#GameModeFlag_TitleCard,(Game_Mode).w ; add $80 to screen mode (for pre level sequence)
-	tst.w	(Demo_mode_flag).w	; test the old flag for the credits demos (now unused)
-	bmi.s	+
 	move.b	#MusID_FadeOut,d0
 	bsr.w	PlaySound	; fade out music
-+
 	bsr.w	ClearPLC
 	bsr.w	Pal_FadeToBlack
-	tst.w	(Demo_mode_flag).w
-	bmi.s	Level_ClrRam
 	move	#$2700,sr
 	bsr.w	ClearScreen
 	jsr	(LoadTitleCard).l ; load title card patterns
@@ -4624,8 +4619,6 @@ Level_WaterPal:
 	move.b	(Saved_Water_move).w,(Water_fullscreen_flag).w
 ; loc_40AE:
 Level_GetBgm:
-	tst.w	(Demo_mode_flag).w
-	bmi.s	+
 	moveq	#0,d0
 	move.b	(Current_Zone).w,d0
 	lea_	MusicList,a1
@@ -4733,14 +4726,6 @@ Level_FromCheckpoint:
 	move.b	(Current_Zone).w,d0	; load zone value
 	lsl.w	#2,d0
 	movea.l	(a1,d0.w),a1
-	tst.w	(Demo_mode_flag).w
-	bpl.s	+
-	lea	(EndingDemoScriptPointers).l,a1
-	move.w	(Ending_demo_number).w,d0
-	subq.w	#1,d0
-	lsl.w	#2,d0
-	movea.l	(a1,d0.w),a1
-+
 	move.b	1(a1),(Demo_press_counter).w
 	tst.b	(Current_Zone).w	; emerald_hill_zone
 	bne.s	+
@@ -4748,13 +4733,6 @@ Level_FromCheckpoint:
 	move.b	1(a1),(Demo_press_counter_2P).w
 +
 	move.w	#$668,(Demo_Time_left).w
-	tst.w	(Demo_mode_flag).w
-	bpl.s	+
-	move.w	#$21C,(Demo_Time_left).w
-	cmpi.w	#4,(Ending_demo_number).w
-	bne.s	+
-	move.w	#$1FE,(Demo_Time_left).w
-+
 	tst.b	(Water_flag).w
 	beq.s	++
 	moveq	#PalID_HPZ_U,d0
@@ -5412,18 +5390,11 @@ MoveDemo_On:
 	or.b	(Ctrl_2_Press).w,d0
 	andi.b	#button_start_mask,d0
 	beq.s	+
-	tst.w	(Demo_mode_flag).w
-	bmi.s	+
 	move.b	#GameModeID_TitleScreen,(Game_Mode).w ; => TitleScreen
 +
 	lea	(DemoScriptPointers).l,a1 ; load pointer to input data
 	moveq	#0,d0
 	move.b	(Current_Zone).w,d0
-	cmpi.b	#GameModeID_SpecialStage,(Game_Mode).w ; special stage mode?
-	bne.s	MoveDemo_On_P1		; if yes, branch
-	moveq	#6,d0
-; loc_48DA:
-MoveDemo_On_P1:
 	lsl.w	#2,d0
 	movea.l	(a1,d0.w),a1
 
@@ -5542,23 +5513,6 @@ DemoScriptPointers: zoneOrderedTable 4,1
 	zoneTableEntry.l Demo_ARZ	; $0F
 	zoneTableEntry.l Demo_EHZ	; $10
     zoneTableEnd
-; ---------------------------------------------------------------------------
-; dword_498C:
-EndingDemoScriptPointers:
-	; these values are invalid addresses, but they were used for the ending
-	; demos, which aren't present in Sonic 2
-	dc.l   $8B0837
-	dc.l   $42085C	; 1
-	dc.l   $6A085F	; 2
-	dc.l   $2F082C	; 3
-	dc.l   $210803	; 4
-	dc.l $28300808	; 5
-	dc.l   $2E0815	; 6
-	dc.l	$F0846	; 7
-	dc.l   $1A08FF	; 8
-	dc.l  $8CA0000	; 9
-	dc.l	     0	; 10
-	dc.l	     0	; 11
 
 
 
@@ -5569,72 +5523,61 @@ EndingDemoScriptPointers:
 LoadCollisionIndexes:
 	moveq	#0,d0
 	move.b	(Current_Zone).w,d0
-	lsl.w	#2,d0
+	lsl.w	#3,d0
 	move.l	#Primary_Collision,(Collision_addr).w
 	move.w	d0,-(sp)
-	movea.l	Off_ColP(pc,d0.w),a0
+	movea.l	Off_Col(pc,d0.w),a0
 	lea	(Primary_Collision).w,a1
 	bsr.w	KosDec
 	move.w	(sp)+,d0
-	movea.l	Off_ColS(pc,d0.w),a0
+	movea.l	Off_Col+4(pc,d0.w),a0
 	lea	(Secondary_Collision).w,a1
 	bra.w	KosDec
 ; End of function LoadCollisionIndexes
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
-; Pointers to primary collision indexes
+; Pointers to primary and secondary collision indexes
 
-; Contains an array of pointers to the primary collision index data for each
-; level. 1 pointer for each level, pointing the primary collision index.
+; Contains an array of pointers to the both collision index data for each
+; level. 2 pointers for each level, pointing the collision index.
 ; ---------------------------------------------------------------------------
-Off_ColP: zoneOrderedTable 4,1
+Off_Col: zoneOrderedTable 4,2
 	zoneTableEntry.l ColP_EHZHTZ
-	zoneTableEntry.l ColP_Invalid	; 1
-	zoneTableEntry.l ColP_MTZ	; 2
-	zoneTableEntry.l ColP_Invalid	; 3
-	zoneTableEntry.l ColP_MTZ	; 4
-	zoneTableEntry.l ColP_MTZ	; 5
-	zoneTableEntry.l ColP_WFZSCZ	; 6
-	zoneTableEntry.l ColP_EHZHTZ	; 7
-	zoneTableEntry.l ColP_HPZ	; 8
-	zoneTableEntry.l ColP_Invalid	; 9
-	zoneTableEntry.l ColP_OOZ	; 10
-	zoneTableEntry.l ColP_MCZ	; 11
-	zoneTableEntry.l ColP_CNZ	; 12
-	zoneTableEntry.l ColP_CPZDEZ	; 13
-	zoneTableEntry.l ColP_CPZDEZ	; 14
-	zoneTableEntry.l ColP_ARZ	; 15
-	zoneTableEntry.l ColP_WFZSCZ	; 16
-    zoneTableEnd
-
-; ---------------------------------------------------------------------------
-; Pointers to secondary collision indexes
-
-; Contains an array of pointers to the secondary collision index data for
-; each level. 1 pointer for each level, pointing the secondary collision
-; index.
-; ---------------------------------------------------------------------------
-Off_ColS: zoneOrderedTable 4,1
 	zoneTableEntry.l ColS_EHZHTZ
 	zoneTableEntry.l ColP_Invalid	; 1
+	zoneTableEntry.l ColP_Invalid
 	zoneTableEntry.l ColP_MTZ	; 2
+	zoneTableEntry.l ColP_MTZ
 	zoneTableEntry.l ColP_Invalid	; 3
+	zoneTableEntry.l ColP_Invalid
 	zoneTableEntry.l ColP_MTZ	; 4
+	zoneTableEntry.l ColP_MTZ
 	zoneTableEntry.l ColP_MTZ	; 5
-	zoneTableEntry.l ColS_WFZSCZ	; 6
-	zoneTableEntry.l ColS_EHZHTZ	; 7
-	zoneTableEntry.l ColS_HPZ	; 8
+	zoneTableEntry.l ColP_MTZ
+	zoneTableEntry.l ColP_WFZSCZ	; 6
+	zoneTableEntry.l ColS_WFZSCZ
+	zoneTableEntry.l ColP_EHZHTZ	; 7
+	zoneTableEntry.l ColS_EHZHTZ
+	zoneTableEntry.l ColP_HPZ	; 8
+	zoneTableEntry.l ColS_HPZ
 	zoneTableEntry.l ColP_Invalid	; 9
+	zoneTableEntry.l ColP_Invalid
 	zoneTableEntry.l ColP_OOZ	; 10
+	zoneTableEntry.l ColP_OOZ
 	zoneTableEntry.l ColP_MCZ	; 11
-	zoneTableEntry.l ColS_CNZ	; 12
-	zoneTableEntry.l ColS_CPZDEZ	; 13
-	zoneTableEntry.l ColS_CPZDEZ	; 14
-	zoneTableEntry.l ColS_ARZ	; 15
-	zoneTableEntry.l ColS_WFZSCZ	; 16
+	zoneTableEntry.l ColP_MCZ
+	zoneTableEntry.l ColP_CNZ	; 12
+	zoneTableEntry.l ColS_CNZ
+	zoneTableEntry.l ColP_CPZDEZ	; 13
+	zoneTableEntry.l ColS_CPZDEZ
+	zoneTableEntry.l ColP_CPZDEZ	; 14
+	zoneTableEntry.l ColS_CPZDEZ
+	zoneTableEntry.l ColP_ARZ	; 15
+	zoneTableEntry.l ColS_ARZ
+	zoneTableEntry.l ColP_WFZSCZ	; 16
+	zoneTableEntry.l ColS_WFZSCZ
     zoneTableEnd
-
 
 ; ---------------------------------------------------------------------------
 ; Oscillating number subroutine
@@ -14698,22 +14641,6 @@ InitCam_HPZ:
 	clr.l	(Camera_BG_X_pos).w
 	rts
     endif
-; ===========================================================================
-; Leftover Spring Yard Zone code from Sonic 1
-
-; Unknown_Zone_BG:
-;InitCam_SYZ:
-    if gameRevision=0
-	asl.l	#4,d0
-	move.l	d0,d2
-	asl.l	#1,d0
-	add.l	d2,d0
-	asr.l	#8,d0
-	addq.w	#1,d0
-	move.w	d0,(Camera_BG_Y_pos).w
-	clr.l	(Camera_BG_X_pos).w
-	rts
-    endif
 
 ; ===========================================================================
 ;return_C320:
@@ -17708,84 +17635,6 @@ SBZ_CameraSections:
 	dc.b   2	; 31
 	dc.b   2	; 32
 	even
-; ===========================================================================
-	; Scrap Brain Zone 1 drawing code -- Sonic 1 left-over.
-
-;Draw_BG2_SBZ:
-	; Chemical Plant Zone uses a lighty-modified version this code.
-	; This is an advanced form of the usual background-drawing code that
-	; allows each row of blocks to update and scroll independently...
-	; kind of. There are only three possible 'cameras' that each row can
-	; align itself with. Still, each row is free to decide which camera
-	; it aligns with.
-	; This could have really benefitted Oil Ocean Zone's background,
-	; which has a section that goes unseen because the regular background
-	; drawer is too primitive to display it without making the sun and
-	; clouds disappear. Using this would have avoided that.
-
-	; Handle loading the rows as the camera moves up and down.
-	moveq	#-16,d4	; X offset (relative to camera)
-	bclr	#scroll_flag_advanced_bg_up,(a2)
-	bne.s	.doUpOrDown
-	bclr	#scroll_flag_advanced_bg_down,(a2)
-	beq.s	.checkIfShouldDoLeftOrRight
-	move.w	#224,d4	; Y offset (relative to camera)
-
-.doUpOrDown:
-	lea_	SBZ_CameraSections+1,a0
-	move.w	(Camera_BG_Y_pos).w,d0
-	add.w	d4,d0
-	andi.w	#$1F0,d0
-	lsr.w	#4,d0
-	move.b	(a0,d0.w),d0
-	lea	(BGCameraLookup).l,a3
-	movea.w	(a3,d0.w),a3	; Camera, either BG, BG2 or BG3 depending on Y
-	beq.s	.doWholeRow
-	moveq	#-16,d5	; X offset (relative to camera)
-	movem.l	d4-d5,-(sp)
-	bsr.w	CalculateVRAMAddressOfBlockForPlayer1
-	movem.l	(sp)+,d4-d5
-	bsr.w	DrawBlockRow
-	bra.s	.checkIfShouldDoLeftOrRight
-; ===========================================================================
-
-.doWholeRow:
-	moveq	#0,d5	; X (absolute)
-	movem.l	d4-d5,-(sp)
-	bsr.w	CalculateVRAMAddressOfBlockForPlayer1.AbsoluteX
-	movem.l	(sp)+,d4-d5
-	moveq	#512/16-1,d6	; The entire width of the plane in blocks minus 1.
-	bsr.w	DrawBlockRow.AbsoluteXCustomWidth
-
-.checkIfShouldDoLeftOrRight:
-	; If there are other scroll flags set, then go do them.
-	tst.b	(a2)
-	bne.s	.doLeftOrRight
-	rts
-; ===========================================================================
-
-.doLeftOrRight:
-	moveq	#-16,d4 ; Y offset
-
-	; Load left column.
-	moveq	#-16,d5 ; X offset
-	move.b	(a2),d0
-	andi.b	#(1<<scroll_flag_advanced_bg1_right)|(1<<scroll_flag_advanced_bg2_right)|(1<<scroll_flag_advanced_bg3_right),d0
-	beq.s	+
-	lsr.b	#1,d0	; Make the left and right flags share the same bits, to simplify a calculation later.
-	move.b	d0,(a2)
-	; Load right column.
-	move.w	#320,d5 ; X offset
-+
-	; Select the correct starting background section, and then begin
-	; drawing the column.
-	lea_	SBZ_CameraSections,a0
-	move.w	(Camera_BG_Y_pos).w,d0
-	andi.w	#$1F0,d0
-	lsr.w	#4,d0
-	lea	(a0,d0.w),a0
-	bra.w	DrawBlockColumn_Advanced
-; end unused routine
 
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
@@ -18332,47 +18181,6 @@ ProcessAndWriteBlock_Horizontal:
 	move.l	d0,(a2)+	; store top two 8x8s for later writing
 	rts
 ; End of function ProcessAndWriteBlock_Horizontal
-
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-;sub_E136: ProcessAndWriteBlock_2P:
-ProcessAndWriteBlock_DoubleResolution_Horizontal:
-	; In two player mode, the VDP's Interlace Mode 2 is enabled, making
-	; tiles twice as tall (16x8 instead of 8x8). Because of this, blocks
-	; are now composed of only two tiles, arranged side by side.
-	btst	#3,(a0)
-	bne.s	.flipY
-	btst	#2,(a0)
-	bne.s	.flipX
-	move.l	(a1)+,(a6)
-	rts
-; ===========================================================================
-; loc_E146:
-.flipX:
-	move.l	(a1)+,d3
-	eori.l	#(flip_x<<16)|flip_x,d3
-	swap	d3
-	move.l	d3,(a6)
-	rts
-; ===========================================================================
-; loc_E154:
-.flipY:
-	btst	#2,(a0)
-	bne.s	.flipXY
-	move.l	(a1)+,d3
-	eori.l	#(flip_y<<16)|flip_y,d3
-	move.l	d3,(a6)
-	rts
-; ===========================================================================
-;loc_E166:
-.flipXY:
-	move.l	(a1)+,d3
-	eori.l	#((flip_x|flip_y)<<16)|flip_x|flip_y,d3
-	swap	d3
-	move.l	d3,(a6)
-	rts
-; End of function ProcessAndWriteBlock_DoubleResolution_Horizontal
 
 
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
@@ -84507,17 +84315,8 @@ Debug_Init:
 	; be assumed that having it cleared here was intended.
 	bclr #1,(MainCharacter+status).w
     endif
-	; S1 leftover
-	cmpi.b	#GameModeID_SpecialStage,(Game_Mode).w ; special stage mode? (you can't enter debug mode in S2's special stage)
-	bne.s	.islevel	; if not, branch
-	moveq	#6,d0		; force zone 6's debug object list (was the ending in S1)
-	bra.s	.selectlist
-; ===========================================================================
-.islevel:
 	moveq	#0,d0
 	move.b	(Current_Zone).w,d0
-
-.selectlist:
 	lea	(JmpTbl_DbgObjLists).l,a2
 	add.w	d0,d0
 	adda.w	(a2,d0.w),a2
@@ -84531,15 +84330,8 @@ Debug_Init:
 	move.b	#1,(Debug_Speed).w
 ; loc_41B0C:
 Debug_Main:
-	; S1 leftover
-	moveq	#6,d0		; force zone 6's debug object list (was the ending in S1)
-	cmpi.b	#GameModeID_SpecialStage,(Game_Mode).w	; special stage mode? (you can't enter debug mode in S2's special stage)
-	beq.s	.isntlevel	; if yes, branch
-
 	moveq	#0,d0
 	move.b	(Current_Zone).w,d0
-
-.isntlevel:
 	lea	(JmpTbl_DbgObjLists).l,a2
 	add.w	d0,d0
 	adda.w	(a2,d0.w),a2
@@ -84696,12 +84488,6 @@ Debug_ExitDebugMode:
 	move.b	#9,x_radius(a1)
 	move.w	(Camera_Min_Y_pos_Debug_Copy).w,(Camera_Min_Y_pos).w
 	move.w	(Camera_Max_Y_pos_Debug_Copy).w,(Camera_Max_Y_pos).w
-	; useless leftover; this is for S1's special stage
-	cmpi.b	#GameModeID_SpecialStage,(Game_Mode).w	; special stage mode?
-	bne.s	return_41CB6		; if not, branch
-	move.b	#AniIDSonAni_Roll,(MainCharacter+anim).w
-	bset	#2,(MainCharacter+status).w
-	bset	#1,(MainCharacter+status).w
 
 return_41CB6:
 	rts
@@ -87970,7 +87756,6 @@ Off_Rings: zoneOrderedTable 4,2
 	zoneTableEntry.l  Rings_SCZ_2	; 33
     zoneTableEnd
 
-	align $80
 Rings_EHZ_1:	BINCLUDE	"level/rings/EHZ_1.bin"
 Rings_EHZ_2:	BINCLUDE	"level/rings/EHZ_2.bin"
 Rings_Lev1_1:	BINCLUDE	"level/rings/01_1.bin"
@@ -88051,7 +87836,6 @@ Off_Objects: zoneOrderedTable 4,2
 	zoneTableEntry.l  Objects_SCZ_2	; 33
     zoneTableEnd
 
-	align $80
 	; These things act as boundaries for the object layout parser, so it doesn't read past the end/beginning of the file
 	ObjectLayoutBoundary
 Objects_EHZ_1:	BINCLUDE	"level/objects/EHZ_1.bin"
