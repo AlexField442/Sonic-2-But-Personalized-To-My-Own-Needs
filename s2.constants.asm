@@ -354,26 +354,6 @@ idstart :=	0		; value to add to all IDs
 ; function using these variables
 id function ptr,((ptr-offset)/ptrsize+idstart)
 
-; V-Int routines
-offset :=	Vint_SwitchTbl
-ptrsize :=	1
-idstart :=	0
-
-VintID_Lag =		id(Vint_Lag_ptr) ; 0
-VintID_SEGA =		id(Vint_SEGA_ptr) ; 2
-VintID_Title =		id(Vint_Title_ptr) ; 4
-VintID_Unused6 =	id(Vint_Unused6_ptr) ; 6
-VintID_Level =		id(Vint_Level_ptr) ; 8
-VintID_S2SS =		id(Vint_S2SS_ptr) ; A
-VintID_TitleCard =	id(Vint_TitleCard_ptr) ; C
-VintID_UnusedE =	id(Vint_UnusedE_ptr) ; E
-VintID_Pause =		id(Vint_Pause_ptr) ; 10
-VintID_Fade =		id(Vint_Fade_ptr) ; 12
-VintID_PCM =		id(Vint_PCM_ptr) ; 14
-VintID_Menu =		id(Vint_Menu_ptr) ; 16
-VintID_Ending =		id(Vint_Ending_ptr) ; 18
-VintID_CtrlDMA =	id(Vint_CtrlDMA_ptr) ; 1A
-
 ; Game modes
 offset :=	GameModesArray
 ptrsize :=	1
@@ -1293,8 +1273,7 @@ Palette_fade_length:		ds.b	1	; Number of entries to change in the palette fading
 MiscLevelVariables:
 VIntSubE_RunCount:		ds.b	1
 				ds.b	1	; $FFFFF629 ; seems unused
-Vint_routine:			ds.b	1	; was "Delay_Time" ; routine counter for V-int
-				ds.b	1	; $FFFFF62B ; seems unused
+Vint_routine:			ds.w	1	; was "Delay_Time" ; routine counter for V-int
 Sprite_count:			ds.b	1	; the number of sprites drawn in the current frame
 				ds.b	5	; $FFFFF62D-$FFFFF631 ; seems unused
 PalCycle_Frame:			ds.w	1	; ColorID loaded in PalCycle
