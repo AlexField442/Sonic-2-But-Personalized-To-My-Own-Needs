@@ -14,6 +14,11 @@
 ;
 ; See s2.notes.txt for more comments about this disassembly and other useful info.
 
+; If you're wondering, this is based off GitHub revision 2b066b4, which was the
+; last version to use a batch builder rather than the "I can't understand Lua
+; code" Lua version; this also means that the music/sfx is still binary files
+; (as I'm too lazy to write a tool to automatically compress music :P).
+
 ; >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ; ASSEMBLY OPTIONS:
 ;
@@ -6145,7 +6150,7 @@ SpecialStage:
 	move.b	#MusID_FadeOut,d0 ; fade out the music
 	bsr.w	PlayMusic
 	bsr.w	Pal_FadeToWhite
-	st.b	(SS_2p_Flag).w ; set to -1
+	clr.b	(SS_2p_Flag).w ; set to -1
 	move	#$2700,sr		; Mask all interrupts
 	lea	(VDP_control_port).l,a6
 	move.w	#$8B03,(a6)		; EXT-INT disabled, V scroll by screen, H scroll by line
