@@ -423,7 +423,7 @@ GameMode_SpecialStage:	dc.l	SpecialStage		; Special stage play mode
 GameMode_ContinueScreen:dc.l	ContinueScreen		; Continue mode
 GameMode_2PResults:	dc.l	TwoPlayerResults	; 2P results mode
 GameMode_2PLevelSelect:	dc.l	MenuScreen		; 2P level select mode
-GameMode_EndingSequence:dc.l	MenuScreen		; End sequence mode
+GameMode_EndingSequence:dc.l	EndingSequence		; End sequence mode
 GameMode_OptionsMenu:	dc.l	MenuScreen		; Options mode
 GameMode_LevelSelect:	dc.l	MenuScreen		; Level select mode
 ; ===========================================================================
@@ -21075,24 +21075,24 @@ Obj15_Obj7A_MapUnc_10256:	offsetTable
 		offsetTableEntry.w word_1027A
 		offsetTableEntry.w word_1028C
 word_1025E:	dc.w 2
-		dc.w $F809, $6060, $6030, $FFE8
-		dc.w $F809, $6860, $6830, 0
+		dc.w $F809, $6060, $FFE8
+		dc.w $F809, $6860, 0
 word_10270:	dc.w 1
-		dc.w $F805, $6066, $6033, $FFF8
+		dc.w $F805, $6066, $FFF8
 word_1027A:	dc.w 2
-		dc.w $E805, $406A, $4035, $FFF4
-		dc.w $F80B, $406E, $4037, $FFF4
+		dc.w $E805, $406A, $FFF4
+		dc.w $F80B, $406E, $FFF4
 word_1028C:	dc.w $A
-		dc.w $A805, $406A, $4035, $FFF4
-		dc.w $B80B, $406E, $4037, $FFF4
-		dc.w $C805, $6066, $6033, $FFF8
-		dc.w $D805, $6066, $6033, $FFF8
-		dc.w $E805, $6066, $6033, $FFF8
-		dc.w $F805, $6066, $6033, $FFF8
-		dc.w $805, $6066, $6033, $FFF8
-		dc.w $1805, $6066, $6033, $FFF8
-		dc.w $2805, $6066, $6033, $FFF8
-		dc.w $3805, $6066, $6033, $FFF8
+		dc.w $A805, $406A, $FFF4
+		dc.w $B80B, $406E, $FFF4
+		dc.w $C805, $6066, $FFF8
+		dc.w $D805, $6066, $FFF8
+		dc.w $E805, $6066, $FFF8
+		dc.w $F805, $6066, $FFF8
+		dc.w $805, $6066, $FFF8
+		dc.w $1805, $6066, $FFF8
+		dc.w $2805, $6066, $FFF8
+		dc.w $3805, $6066, $FFF8
 
 ; ----------------------------------------------------------------------------
 ; sprite mappings
@@ -21102,8 +21102,8 @@ Obj15_MapUnc_102DE:	offsetTable
 		offsetTableEntry.w word_10270
 		offsetTableEntry.w word_1027A
 word_102E4:	dc.w 2
-		dc.w $F80D, $6058, $602C, $FFE0
-		dc.w $F80D, $6858, $682C, 0
+		dc.w $F80D, $6058, $FFE0
+		dc.w $F80D, $6858, 0
 
 ; ===========================================================================
 
@@ -21921,7 +21921,7 @@ Obj1A_CreateFragments:
 ; ===========================================================================
 -	bsr.w	SingleObjLoad
 	bne.s	+++
-	addq.w	#8,a3
+	addq.w	#6,a3
 +
 	move.b	#4,routine(a1)
 	_move.b	d4,id(a1) ; load obj1F
@@ -26398,163 +26398,163 @@ Obj34_MapUnc_147BA:	offsetTable
 	offsetTableEntry.w word_14C08
 	offsetTableEntry.w word_14C32
 word_147E8:	dc.w $B
-	dc.w 5,	$8580, $82C0, $FFC3
-	dc.w 9,	$85DE, $82EF, $FFD0
-	dc.w 5,	$8580, $82C0, $FFE8
-	dc.w 5,	$85E4, $82F2, $FFF8
-	dc.w 5,	$85E8, $82F4, 8
-	dc.w 5,	$85EC, $82F6, $18
-	dc.w 5,	$85F0, $82F8, $28
-	dc.w 5,	$85F4, $82FA, $48
-	dc.w 1,	$85F8, $82FC, $58
-	dc.w 5,	$85EC, $82F6, $60
-	dc.w 5,	$85EC, $82F6, $70
+	dc.w 5,	$8580, $FFC3
+	dc.w 9,	$85DE, $FFD0
+	dc.w 5,	$8580, $FFE8
+	dc.w 5,	$85E4, $FFF8
+	dc.w 5,	$85E8, 8
+	dc.w 5,	$85EC, $18
+	dc.w 5,	$85F0, $28
+	dc.w 5,	$85F4, $48
+	dc.w 1,	$85F8, $58
+	dc.w 5,	$85EC, $60
+	dc.w 5,	$85EC, $70
 word_14842:	dc.w $A
-	dc.w 9,	$85DE, $82EF, $FFE0
-	dc.w 5,	$8580, $82C0, $FFF8
-	dc.w 5,	$85E4, $82F2, 8
-	dc.w 5,	$85E8, $82F4, $18
-	dc.w 5,	$8588, $82C4, $28
-	dc.w 5,	$85EC, $82F6, $38
-	dc.w 5,	$8588, $82C4, $48
-	dc.w 5,	$85F0, $82F8, $58
-	dc.w 1,	$85F4, $82FA, $68
-	dc.w 5,	$85F6, $82FB, $70
+	dc.w 9,	$85DE, $FFE0
+	dc.w 5,	$8580, $FFF8
+	dc.w 5,	$85E4, 8
+	dc.w 5,	$85E8, $18
+	dc.w 5,	$8588, $28
+	dc.w 5,	$85EC, $38
+	dc.w 5,	$8588, $48
+	dc.w 5,	$85F0, $58
+	dc.w 1,	$85F4, $68
+	dc.w 5,	$85F6, $70
 word_14894:	dc.w 7
-	dc.w 5,	$85DE, $82EF, 8
-	dc.w 1,	$85E2, $82F1, $18
-	dc.w 5,	$85E4, $82F2, $20
-	dc.w 5,	$85E4, $82F2, $30
-	dc.w 5,	$85E8, $82F4, $51
-	dc.w 5,	$8588, $82C4, $60
-	dc.w 5,	$85EC, $82F6, $70
+	dc.w 5,	$85DE, 8
+	dc.w 1,	$85E2, $18
+	dc.w 5,	$85E4, $20
+	dc.w 5,	$85E4, $30
+	dc.w 5,	$85E8, $51
+	dc.w 5,	$8588, $60
+	dc.w 5,	$85EC, $70
 word_148CE:	dc.w $C
-	dc.w 5,	$85DE, $82EF, $FFB8
-	dc.w 1,	$85E2, $82F1, $FFC8
-	dc.w 5,	$85E4, $82F2, $FFD0
-	dc.w 5,	$85E4, $82F2, $FFE0
-	dc.w 5,	$8580, $82C0, $FFF0
-	dc.w 5,	$8584, $82C2, 0
-	dc.w 5,	$85E8, $82F4, $20
-	dc.w 5,	$85EC, $82F6, $30
-	dc.w 5,	$85F0, $82F8, $40
-	dc.w 5,	$85EC, $82F6, $50
-	dc.w 5,	$85F4, $82FA, $60
-	dc.w 5,	$8580, $82C0, $70
+	dc.w 5,	$85DE, $FFB8
+	dc.w 1,	$85E2, $FFC8
+	dc.w 5,	$85E4, $FFD0
+	dc.w 5,	$85E4, $FFE0
+	dc.w 5,	$8580, $FFF0
+	dc.w 5,	$8584, 0
+	dc.w 5,	$85E8, $20
+	dc.w 5,	$85EC, $30
+	dc.w 5,	$85F0, $40
+	dc.w 5,	$85EC, $50
+	dc.w 5,	$85F4, $60
+	dc.w 5,	$8580, $70
 word_14930:	dc.w 8
-	dc.w 5,	$8588, $82C4, $FFFB
-	dc.w 1,	$85DE, $82EF, $B
-	dc.w 5,	$85E0, $82F0, $13
-	dc.w 5,	$8588, $82C4, $33
-	dc.w 5,	$85E4, $82F2, $43
-	dc.w 5,	$8580, $82C0, $53
-	dc.w 5,	$85E8, $82F4, $60
-	dc.w 5,	$8584, $82C2, $70
+	dc.w 5,	$8588, $FFFB
+	dc.w 1,	$85DE, $B
+	dc.w 5,	$85E0, $13
+	dc.w 5,	$8588, $33
+	dc.w 5,	$85E4, $43
+	dc.w 5,	$8580, $53
+	dc.w 5,	$85E8, $60
+	dc.w 5,	$8584, $70
 word_14972:	dc.w $A
-	dc.w 9,	$85DE, $82EF, $FFD0
-	dc.w 5,	$85E4, $82F2, $FFE8
-	dc.w 5,	$85E8, $82F4, $FFF8
-	dc.w 5,	$85EC, $82F6, 8
-	dc.w 1,	$85F0, $82F8, $18
-	dc.w 5,	$85F2, $82F9, $20
-	dc.w 5,	$85F2, $82F9, $41
-	dc.w 5,	$85F6, $82FB, $50
-	dc.w 5,	$85FA, $82FD, $60
-	dc.w 5,	$8580, $82C0, $70
+	dc.w 9,	$85DE, $FFD0
+	dc.w 5,	$85E4, $FFE8
+	dc.w 5,	$85E8, $FFF8
+	dc.w 5,	$85EC, 8
+	dc.w 1,	$85F0, $18
+	dc.w 5,	$85F2, $20
+	dc.w 5,	$85F2, $41
+	dc.w 5,	$85F6, $50
+	dc.w 5,	$85FA, $60
+	dc.w 5,	$8580, $70
 word_149C4:	dc.w $B
-	dc.w 5,	$85DE, $82EF, $FFD1
-	dc.w 5,	$85E2, $82F1, $FFE0
-	dc.w 5,	$85E6, $82F3, $FFF0
-	dc.w 1,	$85EA, $82F5, 0
-	dc.w 5,	$8584, $82C2, 8
-	dc.w 5,	$8588, $82C4, $18
-	dc.w 5,	$8584, $82C2, $38
-	dc.w 1,	$85EA, $82F5, $48
-	dc.w 5,	$85EC, $82F6, $50
-	dc.w 5,	$85F0, $82F8, $60
-	dc.w 5,	$85F4, $82FA, $70
+	dc.w 5,	$85DE, $FFD1
+	dc.w 5,	$85E2, $FFE0
+	dc.w 5,	$85E6, $FFF0
+	dc.w 1,	$85EA, 0
+	dc.w 5,	$8584, 8
+	dc.w 5,	$8588, $18
+	dc.w 5,	$8584, $38
+	dc.w 1,	$85EA, $48
+	dc.w 5,	$85EC, $50
+	dc.w 5,	$85F0, $60
+	dc.w 5,	$85F4, $70
 word_14A1E:	dc.w $D
-	dc.w 5,	$85DE, $82EF, $FFA4
-	dc.w 5,	$85E2, $82F1, $FFB4
-	dc.w 5,	$8580, $82C0, $FFC4
-	dc.w 9,	$85E6, $82F3, $FFD1
-	dc.w 1,	$85EC, $82F6, $FFE9
-	dc.w 5,	$85DE, $82EF, $FFF1
-	dc.w 5,	$85EE, $82F7, 0
-	dc.w 5,	$85F2, $82F9, $10
-	dc.w 5,	$85F6, $82FB, $31
-	dc.w 5,	$85F2, $82F9, $41
-	dc.w 5,	$85EE, $82F7, $50
-	dc.w 5,	$8584, $82C2, $60
-	dc.w 5,	$85FA, $82FD, $70
+	dc.w 5,	$85DE, $FFA4
+	dc.w 5,	$85E2, $FFB4
+	dc.w 5,	$8580, $FFC4
+	dc.w 9,	$85E6, $FFD1
+	dc.w 1,	$85EC, $FFE9
+	dc.w 5,	$85DE, $FFF1
+	dc.w 5,	$85EE, 0
+	dc.w 5,	$85F2, $10
+	dc.w 5,	$85F6, $31
+	dc.w 5,	$85F2, $41
+	dc.w 5,	$85EE, $50
+	dc.w 5,	$8584, $60
+	dc.w 5,	$85FA, $70
 word_14A88:	dc.w $B
-	dc.w 5,	$85DE, $82EF, $FFD2
-	dc.w 5,	$85E2, $82F1, $FFE2
-	dc.w 5,	$85E6, $82F3, $FFF2
-	dc.w 5,	$85DE, $82EF, 0
-	dc.w 5,	$85EA, $82F5, $10
-	dc.w 1,	$85EE, $82F7, $20
-	dc.w 5,	$85F0, $82F8, $28
-	dc.w 5,	$85F4, $82FA, $48
-	dc.w 5,	$85E6, $82F3, $58
-	dc.w 1,	$85EE, $82F7, $68
-	dc.w 5,	$8584, $82C2, $70
+	dc.w 5,	$85DE, $FFD2
+	dc.w 5,	$85E2, $FFE2
+	dc.w 5,	$85E6, $FFF2
+	dc.w 5,	$85DE, 0
+	dc.w 5,	$85EA, $10
+	dc.w 1,	$85EE, $20
+	dc.w 5,	$85F0, $28
+	dc.w 5,	$85F4, $48
+	dc.w 5,	$85E6, $58
+	dc.w 1,	$85EE, $68
+	dc.w 5,	$8584, $70
 word_14AE2:	dc.w 8
-	dc.w 5,	$85DE, $82EF, $FFF0
-	dc.w 5,	$85E2, $82F1, 0
-	dc.w 5,	$85E6, $82F3, $10
-	dc.w 5,	$85EA, $82F5, $30
-	dc.w 5,	$85EE, $82F7, $40
-	dc.w 5,	$85F2, $82F9, $50
-	dc.w 5,	$85DE, $82EF, $60
-	dc.w 5,	$8580, $82C0, $70
+	dc.w 5,	$85DE, $FFF0
+	dc.w 5,	$85E2, 0
+	dc.w 5,	$85E6, $10
+	dc.w 5,	$85EA, $30
+	dc.w 5,	$85EE, $40
+	dc.w 5,	$85F2, $50
+	dc.w 5,	$85DE, $60
+	dc.w 5,	$8580, $70
 word_14B24:	dc.w $C
-	dc.w 9,	$85DE, $82EF, $FFB1
-	dc.w 1,	$85E4, $82F2, $FFC8
-	dc.w 5,	$8584, $82C2, $FFD0
-	dc.w 5,	$85E6, $82F3, $FFE0
-	dc.w 5,	$85EA, $82F5, 1
-	dc.w 5,	$8588, $82C4, $10
-	dc.w 5,	$85EE, $82F7, $20
-	dc.w 5,	$85F2, $82F9, $30
-	dc.w 5,	$85EE, $82F7, $40
-	dc.w 5,	$8580, $82C0, $50
-	dc.w 5,	$85F6, $82FB, $5F
-	dc.w 5,	$85F6, $82FB, $6F
+	dc.w 9,	$85DE, $FFB1
+	dc.w 1,	$85E4, $FFC8
+	dc.w 5,	$8584, $FFD0
+	dc.w 5,	$85E6, $FFE0
+	dc.w 5,	$85EA, 1
+	dc.w 5,	$8588, $10
+	dc.w 5,	$85EE, $20
+	dc.w 5,	$85F2, $30
+	dc.w 5,	$85EE, $40
+	dc.w 5,	$8580, $50
+	dc.w 5,	$85F6, $5F
+	dc.w 5,	$85F6, $6F
 word_14B86:	dc.w 8
-	dc.w 5,	$85DE, $82EF, $FFF2
-	dc.w 5,	$8580, $82C0, 2
-	dc.w 5,	$85E2, $82F1, $10
-	dc.w 5,	$85E6, $82F3, $20
-	dc.w 5,	$85EA, $82F5, $30
-	dc.w 5,	$8580, $82C0, $51
-	dc.w 5,	$85EE, $82F7, $60
-	dc.w 5,	$85EE, $82F7, $70
+	dc.w 5,	$85DE, $FFF2
+	dc.w 5,	$8580, 2
+	dc.w 5,	$85E2, $10
+	dc.w 5,	$85E6, $20
+	dc.w 5,	$85EA, $30
+	dc.w 5,	$8580, $51
+	dc.w 5,	$85EE, $60
+	dc.w 5,	$85EE, $70
 word_14BC8:	dc.w 4
-	dc.w 5,	$858C, $82C6, 1
-	dc.w 5,	$8588, $82C4, $10
-	dc.w 5,	$8584, $82C2, $20
-	dc.w 5,	$8580, $82C0, $30
+	dc.w 5,	$858C, 1
+	dc.w 5,	$8588, $10
+	dc.w 5,	$8584, $20
+	dc.w 5,	$8580, $30
 word_14BEA:	dc.w 1
-	dc.w 7,	$A590, $A2C8, 0
+	dc.w 7,	$A590, 0
 word_14BF4:	dc.w 1
-	dc.w $B, $A598,	$A2CC, 0
+	dc.w $B, $A598,	0
 word_14BFE:	dc.w 1
-	dc.w $B, $A5A4,	$A2D2, 0
+	dc.w $B, $A5A4,	0
 word_14C08:	dc.w 5
-	dc.w $D, $85B0,	$82D8, $FFB8
-	dc.w $D, $85B8,	$82DC, $FFD8
-	dc.w $D, $85C0,	$82E0, $FFF8
-	dc.w $D, $85C8,	$82E4, $18
-	dc.w 5,	$85D0, $82E8, $38
+	dc.w $D, $85B0,	$FFB8
+	dc.w $D, $85B8, $FFD8
+	dc.w $D, $85C0,	$FFF8
+	dc.w $D, $85C8,	$18
+	dc.w 5,	$85D0, $38
 word_14C32:	dc.w 7
-	dc.w $9003, $85D4, $82EA, 0
-	dc.w $B003, $85D4, $82EA, 0
-	dc.w $D003, $85D4, $82EA, 0
-	dc.w $F003, $85D4, $82EA, 0
-	dc.w $1003, $85D4, $82EA, 0
-	dc.w $3003, $85D4, $82EA, 0
-	dc.w $5003, $85D4, $82EA, 0
+	dc.w $9003, $85D4, 0
+	dc.w $B003, $85D4, 0
+	dc.w $D003, $85D4, 0
+	dc.w $F003, $85D4, 0
+	dc.w $1003, $85D4, 0
+	dc.w $3003, $85D4, 0
+	dc.w $5003, $85D4, 0
 ; -------------------------------------------------------------------------------
 ; sprite mappings
 ; -------------------------------------------------------------------------------
@@ -26579,76 +26579,76 @@ Obj3A_MapUnc_14CBC:	offsetTable
 	offsetTableEntry.w word_14E8C
 	offsetTableEntry.w word_14E96
 word_14CDA:	dc.w 8
-	dc.w 5,	$85D0, $82E8, $FFC0
-	dc.w 5,	$8588, $82C4, $FFD0
-	dc.w 5,	$8584, $82C2, $FFE0
-	dc.w 1,	$85C0, $82E0, $FFF0
-	dc.w 5,	$85B4, $82DA, $FFF8
-	dc.w 5,	$85B8, $82DC, $10
-	dc.w 5,	$8588, $82C4, $20
-	dc.w 5,	$85D4, $82EA, $2F
+	dc.w 5,	$85D0, $FFC0
+	dc.w 5,	$8588, $FFD0
+	dc.w 5,	$8584, $FFE0
+	dc.w 1,	$85C0, $FFF0
+	dc.w 5,	$85B4, $FFF8
+	dc.w 5,	$85B8, $10
+	dc.w 5,	$8588, $20
+	dc.w 5,	$85D4, $2F
 word_14D1C:	dc.w 8
-	dc.w 9,	$85C6, $82E3, $FFBC
-	dc.w 1,	$85C0, $82E0, $FFD4
-	dc.w 5,	$85C2, $82E1, $FFDC
-	dc.w 5,	$8580, $82C0, $FFEC
-	dc.w 5,	$85D0, $82E8, $FFFC
-	dc.w 5,	$85B8, $82DC, $14
-	dc.w 5,	$8588, $82C4, $24
-	dc.w 5,	$85D4, $82EA, $33
+	dc.w 9,	$85C6, $FFBC
+	dc.w 1,	$85C0, $FFD4
+	dc.w 5,	$85C2, $FFDC
+	dc.w 5,	$8580, $FFEC
+	dc.w 5,	$85D0, $FFFC
+	dc.w 5,	$85B8, $14
+	dc.w 5,	$8588, $24
+	dc.w 5,	$85D4, $33
 word_14D5E:	dc.w 8
-	dc.w 5,	$85D4, $82EA, $FFC3
-	dc.w 5,	$85B0, $82D8, $FFD0
-	dc.w 1,	$85C0, $82E0, $FFE0
-	dc.w 5,	$85C2, $82E1, $FFE8
-	dc.w 5,	$85D0, $82E8, $FFF8
-	dc.w 5,	$85B8, $82DC, $10
-	dc.w 5,	$8588, $82C4, $20
-	dc.w 5,	$85D4, $82EA, $2F
+	dc.w 5,	$85D4, $FFC3
+	dc.w 5,	$85B0, $FFD0
+	dc.w 1,	$85C0, $FFE0
+	dc.w 5,	$85C2, $FFE8
+	dc.w 5,	$85D0, $FFF8
+	dc.w 5,	$85B8, $10
+	dc.w 5,	$8588, $20
+	dc.w 5,	$85D4, $2F
 word_14DA0:	dc.w 7
-	dc.w 5,	$85D4, $82EA, $FFC8
-	dc.w 5,	$85BC, $82DE, $FFD8
-	dc.w 5,	$85CC, $82E6, $FFE8
-	dc.w 5,	$8588, $82C4, $FFF8
-	dc.w 5,	$85D8, $82EC, 8
-	dc.w 5,	$85B8, $82DC, $18
-	dc.w 5,	$85BC, $82DE, $28
+	dc.w 5,	$85D4, $FFC8
+	dc.w 5,	$85BC, $FFD8
+	dc.w 5,	$85CC, $FFE8
+	dc.w 5,	$8588, $FFF8
+	dc.w 5,	$85D8, 8
+	dc.w 5,	$85B8, $18
+	dc.w 5,	$85BC, $28
 word_14DDA:	dc.w 3
-	dc.w 5,	$85B0, $82D8, 0
-	dc.w 5,	$85B4, $82DA, $10
-	dc.w 5,	$85D4, $82EA, $1F
+	dc.w 5,	$85B0, 0
+	dc.w 5,	$85B4, $10
+	dc.w 5,	$85D4, $1F
 word_14DF4:	dc.w 5
-	dc.w 9,	$A5E6, $A2F3, $FFB8
-	dc.w 5,	$A5EC, $A2F6, $FFD0
-	dc.w 5,	$85F0, $82F8, $FFD4
-	dc.w $D, $8520,	$8290, $38
-	dc.w 1,	$86F0, $8378, $58
+	dc.w 9,	$A5E6, $FFB8
+	dc.w 5,	$A5EC, $FFD0
+	dc.w 5,	$85F0, $FFD4
+	dc.w $D, $8520, $38
+	dc.w 1,	$86F0, $58
 word_14E1E:	dc.w 6
-	dc.w $D, $A6DA,	$A36D, $FFA4
-	dc.w $D, $A5DE,	$A2EF, $FFCC
-	dc.w 1,	$A6CA, $A365, $FFEC
-	dc.w 5,	$85F0, $82F8, $FFE8
-	dc.w $D, $8528,	$8294, $38
-	dc.w 1,	$86F0, $8378, $58
+	dc.w $D, $A6DA, $FFA4
+	dc.w $D, $A5DE, $FFCC
+	dc.w 1,	$A6CA, $FFEC
+	dc.w 5,	$85F0, $FFE8
+	dc.w $D, $8528, $38
+	dc.w 1,	$86F0, $58
 word_14E50:	dc.w 6
-	dc.w $D, $A6D2,	$A369, $FFA4
-	dc.w $D, $A5DE,	$A2EF, $FFCC
-	dc.w 1,	$A6CA, $A365, $FFEC
-	dc.w 5,	$85F0, $82F8, $FFE8
-	dc.w $D, $8530,	$8298, $38
-	dc.w 1,	$86F0, $8378, $58
+	dc.w $D, $A6D2, $FFA4
+	dc.w $D, $A5DE, $FFCC
+	dc.w 1,	$A6CA, $FFEC
+	dc.w 5,	$85F0, $FFE8
+	dc.w $D, $8530, $38
+	dc.w 1,	$86F0, $58
 word_14E82:	dc.w 1
-	dc.w 6,	$85F4, $82FA, 0
+	dc.w 6,	$85F4, 0
 word_14E8C:	dc.w 1
-	dc.w 6,	$85FA, $82FD, 0
+	dc.w 6,	$85FA, 0
 word_14E96:	dc.w 7
-	dc.w $D, $A540,	$A2A0, $FF98
-	dc.w 9,	$A548, $A2A4, $FFB8
-	dc.w $D, $A5DE,	$A2EF, $FFD8
-	dc.w 1,	$A6CA, $A365, $FFF8
-	dc.w 5,	$85F0, $82F8, $FFF4
-	dc.w $D, $8538,	$829C, $38
-	dc.w 1,	$86F0, $8378, $58
+	dc.w $D, $A540, $FF98
+	dc.w 9,	$A548, $FFB8
+	dc.w $D, $A5DE, $FFD8
+	dc.w 1,	$A6CA, $FFF8
+	dc.w 5,	$85F0, $FFF4
+	dc.w $D, $8538, $38
+	dc.w 1,	$86F0, $58
 ; -------------------------------------------------------------------------------
 ; sprite mappings
 ; -------------------------------------------------------------------------------
@@ -27392,7 +27392,7 @@ BreakObjectToPieces:	; splits up one object into its current mapping frame piece
 BreakObjectToPieces_Loop:
 	bsr.w	SingleObjLoad2
 	bne.s	loc_15E82
-	addq.w	#8,a3	; next mapping piece
+	addq.w	#6,a3	; next mapping piece
 ; loc_15E46:
 BreakObjectToPieces_InitObject:
 	move.b	#4,routine(a1)
@@ -28429,7 +28429,6 @@ DrawSprite_Loop:
 	move.w	(a1)+,d0
 	add.w	a3,d0
 	move.w	d0,(a2)+	; set art tile and flags
-	addq.w	#2,a1
 	move.w	(a1)+,d0
 	add.w	d3,d0
 	andi.w	#$1FF,d0
@@ -28465,7 +28464,6 @@ DrawSprite_FlipX:
 	add.w	a3,d0
 	eori.w	#$800,d0	; toggle X flip flag
 	move.w	d0,(a2)+
-	addq.w	#2,a1
 	move.w	(a1)+,d0
 	neg.w	d0	; negate X offset
 	move.b	CellOffsets_XFlip(pc,d4.w),d4
@@ -28516,7 +28514,6 @@ DrawSprite_FlipY:
 	add.w	a3,d0
 	eori.w	#$1000,d0	; toggle Y flip flag
 	move.w	d0,(a2)+	; set art tile and flags
-	addq.w	#2,a1
 	move.w	(a1)+,d0
 	add.w	d3,d0
 	andi.w	#$1FF,d0
@@ -28559,7 +28556,6 @@ DrawSprite_FlipXY:
 	add.w	a3,d0
 	eori.w	#$1800,d0	; toggle X and Y flip flags
 	move.w	d0,(a2)+
-	addq.w	#2,a1
 	move.w	(a1)+,d0
 	neg.w	d0
 	move.b	CellOffsets_XFlip2(pc,d4.w),d4
@@ -30680,76 +30676,76 @@ Obj41_MapUnc_19032: offsetTable
 	offsetTableEntry.w word_19194	; $A
 word_19048:
 	dc.w 2
-	dc.w $F00D,    0,    0,$FFF0
-	dc.w	 5,    8,    4,$FFF8; 4
+	dc.w $F00D,    0,$FFF0
+	dc.w	 5,    8,$FFF8; 4
 word_1905A:
 	dc.w 1
-	dc.w $F80D,    0,    0,$FFF0
+	dc.w $F80D,    0,$FFF0
 word_19064:
 	dc.w 2
-	dc.w $E00D,    0,    0,$FFF0
-	dc.w $F007,   $C,    6,$FFF8; 4
+	dc.w $E00D,    0,$FFF0
+	dc.w $F007,   $C,$FFF8; 4
 word_19076:
 	dc.w 2
-	dc.w $F003,    0,    0,	   0
-	dc.w $F801,    4,    2,$FFF8; 4
+	dc.w $F003,    0,	   0
+	dc.w $F801,    4,$FFF8; 4
 word_19088:
 	dc.w 1
-	dc.w $F003,    0,    0,$FFF8
+	dc.w $F003,    0,$FFF8
 word_19092:
 	dc.w 2
-	dc.w $F003,    0,    0,	 $10
-	dc.w $F809,    6,    3,$FFF8; 4
+	dc.w $F003,    0,	 $10
+	dc.w $F809,    6,$FFF8; 4
 word_190A4:
 	dc.w 2
-	dc.w	$D,$1000,$1000,$FFF0
-	dc.w $F005,$1008,$1004,$FFF8; 4
+	dc.w	$D,$1000,$FFF0
+	dc.w $F005,$1008,$FFF8; 4
 word_190B6:
 	dc.w 4
-	dc.w $F00D,    0,    0,$FFF0
-	dc.w	 5,    8,    4,	   0; 4
-	dc.w $FB05,   $C,    6,$FFF6; 8
-	dc.w	 5,$201C,$200E,$FFF0; 12
+	dc.w $F00D,    0,$FFF0
+	dc.w	 5,    8,	   0; 4
+	dc.w $FB05,   $C,$FFF6; 8
+	dc.w	 5,$201C,$FFF0; 12
 word_190D8:
 	dc.w 3
-	dc.w $F60D,    0,    0,$FFEA
-	dc.w  $605,    8,    4,$FFFA; 4
-	dc.w	 5,$201C,$200E,$FFF0; 8
+	dc.w $F60D,    0,$FFEA
+	dc.w  $605,    8,$FFFA; 4
+	dc.w	 5,$201C,$FFF0; 8
 word_190F2:
 	dc.w 4
-	dc.w $E60D,    0,    0,$FFFB
-	dc.w $F605,    8,    4,	  $B; 4
-	dc.w $F30B,  $10,    8,$FFF6; 8
-	dc.w	 5,$201C,$200E,$FFF0; 12
+	dc.w $E60D,    0,$FFFB
+	dc.w $F605,    8,	  $B; 4
+	dc.w $F30B,  $10,$FFF6; 8
+	dc.w	 5,$201C,$FFF0; 12
 word_19114:
 	dc.w 4
-	dc.w	$D,$1000,$1000,$FFF0
-	dc.w $F005,$1008,$1004,	   0; 4
-	dc.w $F505,$100C,$1006,$FFF6; 8
-	dc.w $F005,$301C,$300E,$FFF0; 12
+	dc.w	$D,$1000,$FFF0
+	dc.w $F005,$1008,	   0; 4
+	dc.w $F505,$100C,$FFF6; 8
+	dc.w $F005,$301C,$FFF0; 12
 word_19136:
 	dc.w 4
-	dc.w $F00D,    0,    0,$FFF0
-	dc.w	 5,    8,    4,	   0; 4
-	dc.w $FB05,   $C,    6,$FFF6; 8
-	dc.w	 5,  $1C,   $E,$FFF0; 12
+	dc.w $F00D,    0,$FFF0
+	dc.w	 5,    8,	   0; 4
+	dc.w $FB05,   $C,$FFF6; 8
+	dc.w	 5,  $1C,$FFF0; 12
 word_19158:
 	dc.w 3
-	dc.w $F60D,    0,    0,$FFEA
-	dc.w  $605,    8,    4,$FFFA; 4
-	dc.w	 5,  $1C,   $E,$FFF0; 8
+	dc.w $F60D,    0,$FFEA
+	dc.w  $605,    8,$FFFA; 4
+	dc.w	 5,  $1C,$FFF0; 8
 word_19172:
 	dc.w 4
-	dc.w $E60D,    0,    0,$FFFB
-	dc.w $F605,    8,    4,	  $B; 4
-	dc.w $F30B,  $10,    8,$FFF6; 8
-	dc.w	 5,  $1C,   $E,$FFF0; 12
+	dc.w $E60D,    0,$FFFB
+	dc.w $F605,    8,	  $B; 4
+	dc.w $F30B,  $10,$FFF6; 8
+	dc.w	 5,  $1C,$FFF0; 12
 word_19194:
 	dc.w 4
-	dc.w	$D,$1000,$1000,$FFF0
-	dc.w $F005,$1008,$1004,	   0; 4
-	dc.w $F505,$100C,$1006,$FFF6; 8
-	dc.w $F005,$101C,$100E,$FFF0; 12
+	dc.w	$D,$1000,$FFF0
+	dc.w $F005,$1008,	   0; 4
+	dc.w $F505,$100C,$FFF6; 8
+	dc.w $F005,$101C,$FFF0; 12
 ; ===========================================================================
 
     if gameRevision<2
@@ -41290,42 +41286,42 @@ Obj24_MapUnc_1FC18: offsetTable
 	offsetTableEntry.w word_1FCB6	; $10
 word_1FC3A:
 	dc.w	1
-	dc.w	$FC00, $008D, $0046, $FFFC
+	dc.w	$FC00, $008D, $FFFC
 word_1FC44:
 	dc.w	1
-	dc.w	$FC00, $008E, $0047, $FFFC
+	dc.w	$FC00, $008E, $FFFC
 word_1FC4E:
 	dc.w	1
-	dc.w	$F805, $008F, $0047, $FFF8
+	dc.w	$F805, $008F, $FFF8
 word_1FC58:
 	dc.w	1
-	dc.w	$F805, $0093, $0049, $FFF8
+	dc.w	$F805, $0093, $FFF8
 word_1FC62:
 	dc.w	1
-	dc.w	$F40A, $001C, $000E, $FFF4
+	dc.w	$F40A, $001C, $FFF4
 word_1FC6C:
 	dc.w	1
-	dc.w	$F00F, $0008, $0004, $FFF0
+	dc.w	$F00F, $0008, $FFF0
 word_1FC76:
 	dc.w	4
-	dc.w	$F005, $0018, $000C, $FFF0
-	dc.w	$F005, $0818, $080C, $0000
-	dc.w	$0005, $1018, $100C, $FFF0
-	dc.w	$0005, $1818, $180C, $0000
+	dc.w	$F005, $0018, $FFF0
+	dc.w	$F005, $0818, $0000
+	dc.w	$0005, $1018, $FFF0
+	dc.w	$0005, $1818, $0000
 word_1FC98:
 	dc.w	1
-	dc.w	$F406, $1F41, $1BA0, $FFF8
+	dc.w	$F406, $1F41, $FFF8
 word_1FCA2:
 	dc.w	1
-	dc.w	$F805, $0000, $0000, $FFF8
+	dc.w	$F805, $0000, $FFF8
 word_1FCAC:
 	dc.w	1
-	dc.w	$F805, $0004, $0002, $FFF8
+	dc.w	$F805, $0004, $FFF8
 word_1FCB6:
 	dc.w	0
 word_1FCB8:
 	dc.w	1
-	dc.w	$F406, $1F31, $1B98, $FFF8
+	dc.w	$F406, $1F31, $FFF8
 ; ===========================================================================
 
     if gameRevision<2
@@ -47894,7 +47890,7 @@ loc_25BF6:
 loc_25C1C:
 	jsrto	SingleObjLoad2, JmpTo10_SingleObjLoad2
 	bne.s	loc_25C64
-	addq.w	#8,a3
+	addq.w	#6,a3
 
 loc_25C24:
 	move.b	#4,routine(a1)
@@ -69524,41 +69520,41 @@ Obj90_MapUnc_36D00: offsetTable
 	offsetTableEntry.w word_36D9A	; 0
 word_36D02:
 	dc.w 4
-	dc.w $F400,    0,    0,$FFF8
-	dc.w $FC06,    1,    0,$FFF0 ; 4
-	dc.w $F400, $800, $800,	   0 ; 8
-	dc.w $FC06, $801, $800,	   0 ; 12
+	dc.w $F400,    0,$FFF8
+	dc.w $FC06,    1,$FFF0 ; 4
+	dc.w $F400, $800,	   0 ; 8
+	dc.w $FC06, $801,	   0 ; 12
 word_36D24:
 	dc.w 4
-	dc.w $EC00,    7,    3,$FFF8
-	dc.w $F407,    8,    4,$FFF0 ; 4
-	dc.w $EC00, $807, $803,	   0 ; 8
-	dc.w $F407, $808, $804,	   0 ; 12
+	dc.w $EC00,    7,$FFF8
+	dc.w $F407,    8,$FFF0 ; 4
+	dc.w $EC00, $807,	   0 ; 8
+	dc.w $F407, $808,	   0 ; 12
 word_36D46:
 	dc.w 2
-	dc.w $EC0F,  $10,    8,$FFF0
-	dc.w  $C0C,  $20,  $10,$FFF0 ; 4
+	dc.w $EC0F,  $10,$FFF0
+	dc.w  $C0C,  $20,$FFF0 ; 4
 word_36D58:
 	dc.w 2
-	dc.w $EC0F,  $10,    8,$FFF0
-	dc.w  $C0C,  $24,  $12,$FFF0 ; 4
+	dc.w $EC0F,  $10,$FFF0
+	dc.w  $C0C,  $24,$FFF0 ; 4
 word_36D6A:
 	dc.w 2
-	dc.w $EC0F,  $10,    8,$FFF0
-	dc.w  $C0C,  $28,  $14,$FFF0 ; 4
+	dc.w $EC0F,  $10,$FFF0
+	dc.w  $C0C,  $28,$FFF0 ; 4
 word_36D7C:
 	dc.w 1
-	dc.w $F805,  $2C,  $16,$FFF8
+	dc.w $F805,  $2C,$FFF8
 word_36D86:
 	dc.w 1
-	dc.w $FC00,  $30,  $18,$FFFC
+	dc.w $FC00,  $30,$FFFC
 word_36D90:
 	dc.w 1
-	dc.w $FC00,  $31,  $18,$FFFC
+	dc.w $FC00,  $31,$FFFC
 word_36D9A:
 	dc.w 2
-	dc.w $F805,$4093,$4049,$FFF0
-	dc.w $F805,$4097,$404B,	   0 ; 4
+	dc.w $F805,$4093,$FFF0
+	dc.w $F805,$4097,	   0 ; 4
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 91 - Chop Chop (piranha/shark badnik) from ARZ
@@ -73035,73 +73031,73 @@ ObjAA_MapUnc_39228: offsetTable
 	offsetTableEntry.w word_3932E	; 8	; This should point to word_39350
 word_3923A:
 	dc.w 3
-	dc.w $F801,    0,    0,$FFE5
-	dc.w $F80D,    2,    1,$FFED; 4
-	dc.w  $809,  $1D,   $E,$FFF1; 8
+	dc.w $F801,    0,$FFE5
+	dc.w $F80D,    2,$FFED; 4
+	dc.w  $809,  $1D,$FFF1; 8
 word_39254:
 	dc.w 3
-	dc.w $F801,    0,    0,$FFE5
-	dc.w $F80D,    2,    1,$FFED; 4
-	dc.w  $80D,  $23,  $11,$FFF1; 8
+	dc.w $F801,    0,$FFE5
+	dc.w $F80D,    2,$FFED; 4
+	dc.w  $80D,  $23,$FFF1; 8
 word_3926E:
 	dc.w 1
-	dc.w $FC00,   $A,    5,$FFFC
+	dc.w $FC00,   $A,$FFFC
 word_39278:
 	dc.w 1
-	dc.w $F809,   $F,    7,$FFF9
+	dc.w $F809,   $F,$FFF9
 word_39282:
 	dc.w 1
-	dc.w $F80D,  $15,   $A,$FFF9
+	dc.w $F80D,  $15,$FFF9
 word_3928C:
 	dc.w 1
-	dc.w $FC00,  $2B,  $15,$FFFC
+	dc.w $FC00,  $2B,$FFFC
 word_39296:
 	dc.w 1
-	dc.w $FC00,  $2C,  $16,$FFFC
+	dc.w $FC00,  $2C,$FFFC
 word_392A0:
 	dc.w 1
-	dc.w	 1,   $B,    5,$FFFC
+	dc.w	 1,   $B,$FFFC
 word_392AA:
 	dc.w 1
-	dc.w	 3,   $B,    5,$FFFC
+	dc.w	 3,   $B,$FFFC
 word_392B4:
 	dc.w 2
-	dc.w	 1,   $B,    5,$FFFC
-	dc.w $1003,   $B,    5,$FFFC; 4
+	dc.w	 1,   $B,$FFFC
+	dc.w $1003,   $B,$FFFC; 4
 word_392C6:
 	dc.w 2
-	dc.w	 3,   $B,    5,$FFFC
-	dc.w $2003,   $B,    5,$FFFC; 4
+	dc.w	 3,   $B,$FFFC
+	dc.w $2003,   $B,$FFFC; 4
 word_392D8:
 	dc.w 3
-	dc.w	 1,   $B,    5,$FFFC
-	dc.w $1003,   $B,    5,$FFFC; 4
-	dc.w $3003,   $B,    5,$FFFC; 8
+	dc.w	 1,   $B,$FFFC
+	dc.w $1003,   $B,$FFFC; 4
+	dc.w $3003,   $B,$FFFC; 8
 word_392F2:
 	dc.w 3
-	dc.w	 3,   $B,    5,$FFFC
-	dc.w $2003,   $B,    5,$FFFC; 4
-	dc.w $4003,   $B,    5,$FFFC; 8
+	dc.w	 3,   $B,$FFFC
+	dc.w $2003,   $B,$FFFC; 4
+	dc.w $4003,   $B,$FFFC; 8
 word_3930C:
 	dc.w 4
-	dc.w	 1,   $B,    5,$FFFC
-	dc.w $1003,   $B,    5,$FFFC; 4
-	dc.w $3003,   $B,    5,$FFFC; 8
-	dc.w $5003,   $B,    5,$FFFC; 12
+	dc.w	 1,   $B,$FFFC
+	dc.w $1003,   $B,$FFFC; 4
+	dc.w $3003,   $B,$FFFC; 8
+	dc.w $5003,   $B,$FFFC; 12
 word_3932E:
 	dc.w 4
-	dc.w	 3,   $B,    5,$FFFC
-	dc.w $2003,   $B,    5,$FFFC; 4
-	dc.w $4003,   $B,    5,$FFFC; 8
-	dc.w $6003,   $B,    5,$FFFC; 12
+	dc.w	 3,   $B,$FFFC
+	dc.w $2003,   $B,$FFFC; 4
+	dc.w $4003,   $B,$FFFC; 8
+	dc.w $6003,   $B,$FFFC; 12
 ; Unused frame
 ;word_39350:
 	dc.w 5
-	dc.w	 1,   $B,    5,$FFFC
-	dc.w $1003,   $B,    5,$FFFC; 4
-	dc.w $3003,   $B,    5,$FFFC; 8
-	dc.w $5003,   $B,    5,$FFFC; 12
-	dc.w $7003,   $B,    5,$FFFC; 16
+	dc.w	 1,   $B,$FFFC
+	dc.w $1003,   $B,$FFFC; 4
+	dc.w $3003,   $B,$FFFC; 8
+	dc.w $5003,   $B,$FFFC; 12
+	dc.w $7003,   $B,$FFFC; 16
 
 
 
