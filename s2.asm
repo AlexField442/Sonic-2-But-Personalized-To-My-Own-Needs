@@ -4725,13 +4725,13 @@ Level_FromCheckpoint:
 
 	lea	(TitleCard).w,a1
 	move.b	#$16,TitleCard_ZoneName-TitleCard+routine(a1)
-	move.w	#$2D,TitleCard_ZoneName-TitleCard+anim_frame_duration(a1)
+	move.b	#$2D,TitleCard_ZoneName-TitleCard+anim_frame_duration(a1)
 	move.b	#$16,TitleCard_Zone-TitleCard+routine(a1)
-	move.w	#$2D,TitleCard_Zone-TitleCard+anim_frame_duration(a1)
+	move.b	#$2D,TitleCard_Zone-TitleCard+anim_frame_duration(a1)
 	tst.b	TitleCard_ActNumber-TitleCard+id(a1)
 	beq.s	+	; branch if the act number has been unloaded
 	move.b	#$16,TitleCard_ActNumber-TitleCard+routine(a1)
-	move.w	#$2D,TitleCard_ActNumber-TitleCard+anim_frame_duration(a1)
+	move.b	#$2D,TitleCard_ActNumber-TitleCard+anim_frame_duration(a1)
 +	move.b	#0,(Control_Locked).w
 	move.b	#0,(Control_Locked_P2).w
 	move.b	#1,(Level_started_flag).w
@@ -11959,7 +11959,7 @@ loc_A53A:
 	move.w	d0,y_pos(a1)
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	#AniIDSonAni_Wait<<8,anim(a1)
-	move.w	#$100,anim_frame_duration(a1)
+	move.b	#$FF,anim_frame_duration(a1)
 	rts
 ; ===========================================================================
 
@@ -22405,7 +22405,7 @@ Obj2E_Raise:
 
 +
 	addq.b	#2,routine(a0)
-	move.w	#$1D,anim_frame_duration(a0)
+	move.b	#$1D,anim_frame_duration(a0)
 	movea.w	parent(a0),a1 ; a1=character
 	lea	(Monitors_Broken).w,a2
 	cmpa.w	#MainCharacter,a1	; did Sonic break the monitor?
@@ -22775,7 +22775,7 @@ qmark_monitor:
 ; ---------------------------------------------------------------------------
 ;loc_12CC2:
 Obj2E_Wait:
-	subq.w	#1,anim_frame_duration(a0)
+	subq.b	#1,anim_frame_duration(a0)
 	bmi.w	DeleteObject
 	bra.w	DisplaySprite
 ; ===========================================================================
@@ -24130,9 +24130,9 @@ Obj34_BackgroundOut:
 ; ===========================================================================
 ; loc_13F18:
 Obj34_WaitAndGoAway:
-	tst.w	anim_frame_duration(a0)
+	tst.b	anim_frame_duration(a0)
 	beq.s	+
-	subq.w	#1,anim_frame_duration(a0)
+	subq.b	#1,anim_frame_duration(a0)
 	bra.s	+++	; DisplaySprite
 ; ---------------------------------------------------------------------------
 +
@@ -24233,7 +24233,7 @@ Obj39_SlideIn:
 ; ===========================================================================
 ; loc_13FE2:
 Obj39_SetTimer:
-	move.w	#$2D0,anim_frame_duration(a0)
+	move.b	#$C0,anim_frame_duration(a0)
 	addq.b	#2,routine(a0)
 	rts
 ; ===========================================================================
@@ -24245,9 +24245,12 @@ Obj39_Wait:
 	or.b	(Ctrl_2_Press).w,d0
 	andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
 	bne.s	Obj39_Dismiss
-	tst.w	anim_frame_duration(a0)
+	tst.b	anim_frame_duration(a0)
 	beq.s	Obj39_Dismiss
-	subq.w	#1,anim_frame_duration(a0)
+	move.b	(Timer_frames+1).w,d0
+	andi.b	#3,d0
+	bne.w	DisplaySprite
+	subq.b	#1,anim_frame_duration(a0)
 	bra.w	DisplaySprite
 ; ===========================================================================
 ; loc_14014:
@@ -24345,7 +24348,7 @@ loc_14118:
 	cmp.w	objoff_30(a0),d0
 	bne.w	return_14138
 	move.b	#$A,routine(a0)
-	move.w	#$B4,anim_frame_duration(a0)
+	move.w	#$B4,objoff_34(a0)
 
 return_14138:
 	rts
@@ -24398,7 +24401,7 @@ loc_14194:
 ; ===========================================================================
 
 loc_1419C:
-	subq.w	#1,anim_frame_duration(a0)
+	subq.w	#1,objoff_34(a0)
 	bne.s	BranchTo18_DisplaySprite
 	addq.b	#2,routine(a0)
 
@@ -24434,10 +24437,10 @@ loc_141E6:
 	move.w	#SndID_TallyEnd,d0
 	jsr	(PlaySound).l
 	addq.b	#2,routine(a0)
-	move.w	#$B4,anim_frame_duration(a0)
+	move.w	#$B4,objoff_34(a0)
 	cmpi.w	#1000,(Total_Bonus_Countdown).w
 	blo.s	return_14254
-	move.w	#$12C,anim_frame_duration(a0)
+	move.w	#$12C,objoff_34(a0)
 	lea	next_object(a0),a1 ; a1=object
 
 loc_14214:
@@ -24454,7 +24457,7 @@ loc_14220:
 	move.w	#$118,y_pixel(a1)
 	move.l	#Obj3A_MapUnc_14CBC,mappings(a1)
 	move.b	#0,render_flags(a1)
-	move.w	#$3C,anim_frame_duration(a1)
+	move.w	#$3C,objoff_34(a1)
 	addq.b	#1,(Continue_count).w
 
 return_14254:
@@ -24494,9 +24497,9 @@ loc_1429C:
 ; ===========================================================================
 
 loc_142B0:
-	tst.w	anim_frame_duration(a0)
+	tst.w	objoff_34(a0)
 	beq.s	loc_142BC
-	subq.w	#1,anim_frame_duration(a0)
+	subq.w	#1,objoff_34(a0)
 	rts
 ; ===========================================================================
 
@@ -24506,9 +24509,9 @@ loc_142BC:
 	jsr	(PlaySound).l
 
 loc_142CC:
-	subq.w	#1,anim_frame_duration(a0)
+	subq.w	#1,objoff_34(a0)
 	bpl.s	loc_142E2
-	move.w	#$13,anim_frame_duration(a0)
+	move.w	#$13,objoff_34(a0)
 	addq.b	#1,anim_frame(a0)
 	andi.b	#1,anim_frame(a0)
 
@@ -24695,7 +24698,7 @@ Obj6F_InitEmeraldText:
 	cmp.w	x_pixel(a0),d0
 	bne.s	BranchTo2_Obj34_MoveTowardsTargetPosition
 	move.b	#$1C,routine(a0)	; => Obj6F_TimedDisplay
-	move.w	#$B4,anim_frame_duration(a0)
+	move.b	#$B4,anim_frame_duration(a0)
 
 BranchTo2_Obj34_MoveTowardsTargetPosition
 	bra.w	Obj34_MoveTowardsTargetPosition
@@ -24775,7 +24778,7 @@ Obj6F_P1Rings:
 	st.b	(Update_Bonus_score).w	; set to -1 (update)
 	move.w	#SndID_Signpost,d0
 	jsr	(PlaySound).l
-	move.w	#$5A,(SpecialStageResults+anim_frame_duration).w
+	move.b	#$5A,(SpecialStageResults+anim_frame_duration).w
 	bra.w	Obj6F_PerfectBonus
 ; ===========================================================================
 +
@@ -24814,7 +24817,7 @@ Obj6F_DeleteIfNotEmerald:
 ; ===========================================================================
 ;loc_14572
 Obj6F_TimedDisplay:
-	subq.w	#1,anim_frame_duration(a0)
+	subq.b	#1,anim_frame_duration(a0)
 	bne.s	BranchTo19_DisplaySprite
 	addq.b	#2,routine(a0)
 
@@ -24846,7 +24849,7 @@ Obj6F_TallyScore:
 	move.w	#SndID_TallyEnd,d0
 	jsr	(PlaySound).l
 	addq.b	#2,routine(a0)		; => Obj6F_TimedDisplay
-	move.w	#$78,anim_frame_duration(a0)
+	move.b	#$78,anim_frame_duration(a0)
 	tst.w	(Perfect_rings_flag).w
 	bne.s	+
 	cmpi.w	#2,(Player_mode).w
@@ -24860,7 +24863,7 @@ Obj6F_TallyScore:
 ; ===========================================================================
 +
 	move.b	#$24,routine(a0)	; => Obj6F_TimedDisplay
-	move.w	#$5A,anim_frame_duration(a0)
+	move.b	#$5A,anim_frame_duration(a0)
 /
 	rts
 ; ===========================================================================
@@ -24900,7 +24903,7 @@ Obj6F_TallyPerfect:
 	move.w	#SndID_TallyEnd,d0
 	jsr	(PlaySound).l
 	addq.b	#4,routine(a0)
-	move.w	#$78,anim_frame_duration(a0)
+	move.b	#$78,anim_frame_duration(a0)
 	cmpi.w	#2,(Player_mode).w
 	beq.s	+		; rts
 	tst.b	(Got_Emerald).w
@@ -24969,7 +24972,7 @@ Obj6F_MoveAndDisplay:
 	move.w	x_pos(a0),d0
 	cmp.w	objoff_30(a0),d0
 	bne.w	Obj34_MoveTowardsTargetPosition
-	move.w	#$B4,anim_frame_duration(a0)
+	move.b	#$B4,anim_frame_duration(a0)
 	move.b	#$20,routine(a0)	; => Obj6F_TimedDisplay
 	bra.w	DisplaySprite
 ; ===========================================================================
@@ -45836,9 +45839,9 @@ loc_253C6:
 	bne.s	loc_253EE
 	cmpi.b	#7,mapping_frame(a0)
 	beq.s	loc_25408
-	subq.w	#1,anim_frame_duration(a0)
+	subq.b	#1,anim_frame_duration(a0)
 	bpl.s	return_253EC
-	move.w	#7,anim_frame_duration(a0)
+	move.b	#7,anim_frame_duration(a0)
 	addq.b	#1,mapping_frame(a0)
 	cmpi.b	#7,mapping_frame(a0)
 	beq.s	loc_25408
@@ -45850,9 +45853,9 @@ return_253EC:
 loc_253EE:
 	tst.b	mapping_frame(a0)
 	beq.s	loc_25408
-	subq.w	#1,anim_frame_duration(a0)
+	subq.b	#1,anim_frame_duration(a0)
 	bpl.s	return_253EC
-	move.w	#7,anim_frame_duration(a0)
+	move.b	#7,anim_frame_duration(a0)
 	subq.b	#1,mapping_frame(a0)
 	beq.s	loc_25408
 	rts
@@ -45871,7 +45874,7 @@ loc_25408:
 	add.w	d0,d0
 	move.w	word_25464(pc,d0.w),x_vel(a1)
 	move.w	word_25464+2(pc,d0.w),y_vel(a1)
-	move.w	#3,anim_frame_duration(a0)
+	move.b	#3,anim_frame_duration(a0)
 	tst.b	subtype(a0)
 	bpl.s	return_25462
 	move.b	#0,obj_control(a1)
@@ -45907,9 +45910,9 @@ loc_25492:
 	beq.s	Obj48_MoveCharacter
 	cmpi.b	#2,objoff_36(a0)
 	beq.s	Obj48_MoveCharacter
-	subq.w	#1,anim_frame_duration(a0)
+	subq.b	#1,anim_frame_duration(a0)
 	bpl.s	Obj48_MoveCharacter
-	move.w	#1,anim_frame_duration(a0)
+	move.b	#1,anim_frame_duration(a0)
 	tst.b	objoff_3E(a0)
 	beq.s	loc_254C2
 	cmpi.b	#7,mapping_frame(a0)
@@ -70590,7 +70593,7 @@ loc_38832:
 
 loc_3884A:
 	clr.l	mapping_frame(a0)
-	clr.w	anim_frame_duration(a0)
+	clr.b	anim_frame_duration(a0)
 	move.b	#3,mapping_frame(a0)
 	jmpto	MarkObjGone, JmpTo39_MarkObjGone
 ; ===========================================================================
@@ -70606,7 +70609,7 @@ loc_3885C:
 loc_38870:
 	addq.b	#2,routine(a0)
 	clr.l	mapping_frame(a0)
-	clr.w	anim_frame_duration(a0)
+	clr.b	anim_frame_duration(a0)
 	jmpto	MarkObjGone_P1, JmpTo2_MarkObjGone_P1
 ; ===========================================================================
 
@@ -70621,7 +70624,7 @@ loc_3888E:
 	move.w	#$80,objoff_30(a0)
 	andi.b	#$7F,collision_flags(a0)
 	clr.l	mapping_frame(a0)
-	clr.w	anim_frame_duration(a0)
+	clr.b	anim_frame_duration(a0)
 	jmpto	MarkObjGone_P1, JmpTo2_MarkObjGone_P1
 ; ===========================================================================
 ; off_388AC:
@@ -71733,7 +71736,7 @@ loc_394A2:
 +
 	lea	mapping_frame(a0),a1
 	clr.l	(a1)
-	clr.w	anim_frame_duration-mapping_frame(a1)
+	clr.b	anim_frame_duration-mapping_frame(a1)
 	move.b	#8,(a1)
 	move.b	#6,collision_flags(a0)
 	jmpto	MarkObjGone, JmpTo39_MarkObjGone
@@ -71755,7 +71758,7 @@ loc_394E0:
 	addq.b	#2,routine(a0)
 	lea	mapping_frame(a0),a1
 	clr.l	(a1)
-	clr.w	anim_frame_duration-mapping_frame(a1)
+	clr.b	anim_frame_duration-mapping_frame(a1)
 	move.b	#$B,(a1)
 	bsr.w	loc_39526
 	jmpto	MarkObjGone, JmpTo39_MarkObjGone
@@ -73418,7 +73421,7 @@ loc_3AB18:
 	bclr	#1,status(a1)
 	bclr	#2,status(a1)
 	move.l	#(1<<24)|(0<<16)|(AniIDSonAni_Wait<<8)|AniIDSonAni_Wait,mapping_frame(a1)
-	move.w	#$100,anim_frame_duration(a1)
+	move.b	#$FF,anim_frame_duration(a1)
 	move.b	#$13,y_radius(a1)
 	cmpi.w	#2,(Player_mode).w
 	bne.s	+
@@ -73528,7 +73531,7 @@ ObjB2_Deactivate_level:
 ObjB2_Waiting_animation:
 	lea	(MainCharacter).w,a1 ; a1=character
 	move.l	#(1<<24)|(0<<16)|(AniIDSonAni_Wait<<8)|AniIDSonAni_Wait,mapping_frame(a1)
-	move.w	#$100,anim_frame_duration(a1)
+	move.b	#$FF,anim_frame_duration(a1)
 	rts
 ; ===========================================================================
 ; loc_3AC6A:
@@ -79322,7 +79325,7 @@ loc_3F2FC:
 	dbf	d6,-
 +
 	movea.w	objoff_3C(a0),a2 ; a2=object
-	move.w	#$B4,anim_frame_duration(a2)
+	move.b	#$B4,anim_frame_duration(a2)
 	addq.b	#2,routine_secondary(a2)
 	addq.b	#2,routine_secondary(a0)
 
@@ -79385,10 +79388,10 @@ loc_3F3A8:
 	move.w	#$C,objoff_36(a1)
 
 loc_3F3F4:
-	subq.w	#1,anim_frame_duration(a0)
+	subq.b	#1,anim_frame_duration(a0)
 	bne.s	return_3F404
 	addq.b	#2,routine(a0)
-	move.w	#$B4,anim_frame_duration(a0)
+	move.b	#$B4,anim_frame_duration(a0)
 
 return_3F404:
 	rts

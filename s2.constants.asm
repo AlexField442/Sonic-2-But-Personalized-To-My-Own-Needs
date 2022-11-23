@@ -32,16 +32,16 @@ x_radius =		$17 ; collision width / 2
 anim_frame =		$1B
 anim =			$1C
 prev_anim =		$1D
-anim_frame_duration =	$1E
 status =		$22 ; note: exact meaning depends on the object... for Sonic/Tails: bit 0: left-facing. bit 1: in-air. bit 2: spinning. bit 3: on-object. bit 4: roll-jumping. bit 5: pushing. bit 6: underwater.
+anim_frame_duration =	$23
 routine =		$24
 routine_secondary =	$25
 angle =			$26 ; angle about the z axis (360 degrees = 256)
 ; ---------------------------------------------------------------------------
 ; conventions followed by many objects but NOT Sonic/Tails:
+respawn_index =		$1E
 collision_flags =	$20
 collision_property =	$21
-respawn_index =		$23
 subtype =		$28
 ; ---------------------------------------------------------------------------
 ; conventions specific to Sonic/Tails (Obj01, Obj02, and ObjDB):
@@ -133,7 +133,7 @@ objoff_28 =		$28 ; overlaps subtype, but a few objects use it for other things a
  enum objoff_38=$38,objoff_39=$39,objoff_3A=$3A,objoff_3B=$3B,objoff_3C=$3C,objoff_3D=$3D,objoff_3E=$3E,objoff_3F=$3F
 ; ---------------------------------------------------------------------------
 ; Special Stage object properties:
-ss_dplc_timer = $23
+ss_dplc_timer = $1E
 ss_x_pos = objoff_2A
 ss_x_sub = objoff_2C
 ss_y_pos = objoff_2E
