@@ -876,17 +876,6 @@ CmdID__End =		id(CmdPtr__End)		; FE
 MusID_Pause =		$7E+$80			; FE
 MusID_Unpause =		$7F+$80			; FF
 
-; 2P VS results screens
-offset := TwoPlayerResultsPointers
-ptrsize := 8
-idstart := 0
-
-VsRSID_Act =	id(VsResultsScreen_Act)		; 0
-VsRSID_Zone =	id(VsResultsScreen_Zone)	; 1
-VsRSID_Game =	id(VsResultsScreen_Game)	; 2
-VsRSID_SS =	id(VsResultsScreen_SS)		; 3
-VsRSID_SSZone =	id(VsResultsScreen_SSZone)	; 4
-
 ; Animation IDs
 offset :=	SonicAniData
 ptrsize :=	2
