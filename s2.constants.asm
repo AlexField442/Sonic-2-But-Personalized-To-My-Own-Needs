@@ -8,6 +8,8 @@ Size_of_DAC_samples =		$2F00
 Size_of_SEGA_sound =		$6174
 Size_of_Snd_driver_guess =	$F64 ; approximate post-compressed size of the Z80 sound driver
 
+Rings_Space =			511
+
 ; ---------------------------------------------------------------------------
 ; Object Status Table offsets (for everything between Object_RAM and Primary_Collision)
 ; ---------------------------------------------------------------------------
@@ -1063,8 +1065,12 @@ Tails_Pos_Record_Buf_End:
 CNZ_saucer_data:		ds.b	$40	; the number of saucer bumpers in a group which have been destroyed. Used to decide when to give 500 points instead of 10
 CNZ_saucer_data_End:
 				ds.b	$C0	; $FFFFE740-$FFFFE7FF ; unused as far as I can tell
-Ring_Positions:			ds.b	$600
+Ring_Positions:			ds.b	(Rings_Space+1)*2
+				; each word stores one ring, so in total, this stores 512 rings
+				; to calculate RAM usage, convert the Rings_Space number to hexadecimal,
+				; add one more to the value, and then times it by two
 Ring_Positions_End:
+				ds.b	$200	; $FFFFEC00-$FFFFEDFF ; unused
 
 Camera_RAM:
 
@@ -1346,15 +1352,11 @@ Tails_CPU_jumping:		ds.b	1
 Rings_manager_routine:		ds.b	1
 Level_started_flag:		ds.b	1
 
-Ring_Manager_Addresses:
-Ring_start_addr:		ds.w	1
-Ring_end_addr:			ds.w	1
-Ring_Manager_Addresses_End:
+Ring_start_addr_RAM:		ds.w	1
+Ring_end_addr_RAM:		ds.w	1
 
-Ring_Manager_Addresses_P2:
-Ring_start_addr_P2:		ds.w	1
-Ring_end_addr_P2:		ds.w	1
-Ring_Manager_Addresses_P2_End:
+Ring_start_addr_ROM:		ds.l	1
+Ring_end_addr_ROM:		ds.l	1
 
 CNZ_Bumper_routine:		ds.b	1
 CNZ_Bumper_UnkFlag:		ds.b	1	; Set only, never used again
@@ -1364,10 +1366,7 @@ CNZ_Visible_bumpers_start:	ds.l	1
 CNZ_Visible_bumpers_end:	ds.l	1
 Bumper_Manager_Addresses_End:
 
-Bumper_Manager_Addresses_P2:
-CNZ_Visible_bumpers_start_P2:	ds.l	1
-CNZ_Visible_bumpers_end_P2:	ds.l	1
-Bumper_Manager_Addresses_P2_End:
+				ds.l	1	; $FFFFF728-$FFFFF72B ; unused
 
 Screen_redraw_flag:		ds.b	1	; if whole screen needs to redraw, such as when you destroy that piston before the boss in WFZ
 CPZ_UnkScroll_Timer:		ds.b	1	; Used only in unused CPZ scrolling function

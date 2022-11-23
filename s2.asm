@@ -22576,191 +22576,7 @@ invincible_monitor:
 ;loc_12AA6:
 teleport_monitor:
 	addq.w	#1,(a2)
-	cmpi.b	#6,(MainCharacter+routine).w	; is player 1 dead or respawning?
-	bhs.s	+				; if yes, branch
-	cmpi.b	#6,(Sidekick+routine).w		; is player 2 dead or respawning?
-	blo.s	swap_players			; if not, branch
-+	; can't teleport if either player is dead
 	rts
-
-; ---------------------------------------------------------------------------
-; Routine to make both players swap positions
-; and handle anything else that needs to be done
-; ---------------------------------------------------------------------------
-swap_players:
-	lea	(teleport_swap_table).l,a3
-	moveq	#(teleport_swap_table_end-teleport_swap_table)/6-1,d2	; amount of entries in table - 1
-
-process_swap_table:
-	movea.w	(a3)+,a1	; address for main character
-	movea.w	(a3)+,a2	; address for sidekick
-	move.w	(a3)+,d1	; amount of word length data to be swapped
-
--	; swap data between the main character and the sidekick d1 times
-	move.w	(a1),d0
-	move.w	(a2),(a1)+
-	move.w	d0,(a2)+
-	dbf	d1,-
-
-	dbf	d2,process_swap_table	; process remaining entries in the list
-
-	move.b	#AniIDSonAni_Run,(MainCharacter+prev_anim).w	; force Sonic's animation to restart
-	move.b	#AniIDSonAni_Run,(Sidekick+prev_anim).w	; force Tails' animation to restart
-    if gameRevision>0
-	move.b	#0,(MainCharacter+mapping_frame).w
-	move.b	#0,(Sidekick+mapping_frame).w
-    endif
-	move.b	#-1,(Sonic_LastLoadedDPLC).w
-	move.b	#-1,(Tails_LastLoadedDPLC).w
-	move.b	#-1,(TailsTails_LastLoadedDPLC).w
-	lea	(Player_1_loaded_object_blocks).w,a1
-	lea	(Player_2_loaded_object_blocks).w,a2
-
-	moveq	#2,d1
--	move.b	(a1),d0
-	move.b	(a2),(a1)+
-	move.b	d0,(a2)+
-	dbf	d1,-
-
-	subi.w	#$180,(Camera_Y_pos).w
-	subi.w	#$180,(Camera_Y_pos_P2).w
-	move.w	(MainCharacter+art_tile).w,d0
-	andi.w	#drawing_mask,(MainCharacter+art_tile).w
-	tst.w	(Sidekick+art_tile).w
-	bpl.s	+
-	ori.w	#high_priority,(MainCharacter+art_tile).w
-+
-	andi.w	#drawing_mask,(Sidekick+art_tile).w
-	tst.w	d0
-	bpl.s	+
-	ori.w	#high_priority,(Sidekick+art_tile).w
-+
-	move.b	#1,(Camera_Max_Y_Pos_Changing).w
-	lea	(Dynamic_Object_RAM).w,a1
-	moveq	#(Dynamic_Object_RAM_End-Dynamic_Object_RAM)/object_size-1,d1
-
-; process objects:
-swap_loop_objects:
-	cmpi.b	#ObjID_PinballMode,id(a1) ; is it obj84 (pinball mode switcher)?
-	beq.s	+ ; if yes, branch
-	cmpi.b	#ObjID_PlaneSwitcher,id(a1) ; is it obj03 (collision plane switcher)?
-	bne.s	++ ; if not, branch further
-
-+
-	move.b	objoff_34(a1),d0
-	move.b	objoff_35(a1),objoff_34(a1)
-	move.b	d0,objoff_35(a1)
-
-+
-	cmpi.b	#ObjID_PointPokey,id(a1) ; is it objD6 (CNZ point giver)?
-	bne.s	+ ; if not, branch
-	move.l	objoff_30(a1),d0
-	move.l	objoff_34(a1),objoff_30(a1)
-	move.l	d0,objoff_34(a1)
-
-+
-	cmpi.b	#ObjID_LauncherSpring,id(a1) ; is it obj85 (CNZ pressure spring)?
-	bne.s	+ ; if not, branch
-	move.b	objoff_36(a1),d0
-	move.b	objoff_37(a1),objoff_36(a1)
-	move.b	d0,objoff_37(a1)
-
-+
-	lea	next_object(a1),a1 ; look at next object ; a1=object
-	dbf	d1,swap_loop_objects ; loop
-
-
-	lea	(MainCharacter).w,a1 ; a1=character
-	move.b	#ObjID_Shield,(Sonic_Shield+id).w ; load Obj38 (shield) at $FFFFD180
-	move.w	a1,(Sonic_Shield+parent).w
-	move.b	#ObjID_InvStars,(Sonic_InvincibilityStars+id).w ; load Obj35 (invincibility stars) at $FFFFD200
-	move.w	a1,(Sonic_InvincibilityStars+parent).w
-	btst	#2,status(a1)	; is Sonic spinning?
-	bne.s	+		; if yes, branch
-	move.b	#$13,y_radius(a1)	; set to standing height
-	move.b	#9,x_radius(a1)
-+
-	btst	#3,status(a1)	; is Sonic on an object?
-	beq.s	+		; if not, branch
-	moveq	#0,d0
-	move.b	interact(a1),d0
-    if object_size=$40
-	lsl.w	#6,d0
-    else
-	mulu.w	#object_size,d0
-    endif
-	addi.l	#Object_RAM,d0
-	movea.l	d0,a2	; a2=object
-	bclr	#4,status(a2)
-	bset	#3,status(a2)
-
-+
-	lea	(Sidekick).w,a1 ; a1=character
-	move.b	#ObjID_Shield,(Tails_Shield+id).w ; load Obj38 (shield) at $FFFFD1C0
-	move.w	a1,(Tails_Shield+parent).w
-	move.b	#ObjID_InvStars,(Tails_InvincibilityStars+id).w ; load Obj35 (invincibility) at $FFFFD300
-	move.w	a1,(Tails_InvincibilityStars+parent).w
-	btst	#2,status(a1)	; is Tails spinning?
-	bne.s	+		; if yes, branch
-	move.b	#$F,y_radius(a1)	; set to standing height
-	move.b	#9,x_radius(a1)
-
-+
-	btst	#3,status(a1)	; is Tails on an object?
-	beq.s	+		; if not, branch
-	moveq	#0,d0
-	move.b	interact(a1),d0
-    if object_size=$40
-	lsl.w	#6,d0
-    else
-	mulu.w	#object_size,d0
-    endif
-	addi.l	#Object_RAM,d0
-	movea.l	d0,a2	; a2=object
-	bclr	#3,status(a2)
-	bset	#4,status(a2)
-
-+
-	move.b	#$40,(Teleport_timer).w
-	move.b	#1,(Teleport_flag).w
-	move.w	#SndID_Teleport,d0
-	jmp	(PlayMusic).l
-; ===========================================================================
-
-; This macro is used to make the table neater and perform some validation.
-TeleportTableEntry macro addressA, addressB
-.sizeA := addressA_End-addressA
-.sizeB := addressB_End-addressB
-	if (.sizeA<>.sizeB)
-		fatal "The space between 'addressA' and 'addressA_End' (\{.sizeA} bytes), and 'addressB' and 'addressB_End' (\{.sizeB} bytes) need to be the same size."
-	endif
-	dc.w	addressA, addressB, bytesToWcnt(.sizeA)
-	endm
-
-; Table listing all the addresses for players 1 and 2 that need to be swapped
-; when a teleport monitor is destroyed
-;byte_12C52:
-teleport_swap_table:
-	; Swap much of Sonic's and Tails' object RAM.
-	dc.w	MainCharacter+x_pos, Sidekick+x_pos, bytesToWcnt(object_size-x_pos)
-	; Swap various RAM buffers and variables.
-	TeleportTableEntry	Camera_X_pos_last,        Camera_X_pos_last_P2
-	TeleportTableEntry	Obj_respawn_index,        Obj_respawn_index_P2
-	TeleportTableEntry	Object_Manager_Addresses, Object_Manager_Addresses_P2
-	TeleportTableEntry	Sonic_Speeds,             Tails_Speeds
-	TeleportTableEntry	Bumper_Manager_Addresses, Bumper_Manager_Addresses_P2
-	TeleportTableEntry	Camera_Positions,         Camera_Positions_P2
-	TeleportTableEntry	Camera_X_pos_coarse,      Camera_X_pos_coarse_P2
-	TeleportTableEntry	Camera_Boundaries,        Camera_Boundaries_P2
-	TeleportTableEntry	Camera_Delay,             Camera_Delay_P2
-	TeleportTableEntry	Camera_Y_pos_bias,        Camera_Y_pos_bias_P2
-	TeleportTableEntry	Block_Crossed_Flags,      Block_Crossed_Flags_P2
-	TeleportTableEntry	Scroll_Flags_All,         Scroll_Flags_All_P2
-	TeleportTableEntry	Camera_Positions_Copy,    Camera_Positions_Copy_P2
-	TeleportTableEntry	Scroll_Flags_Copy_All,    Scroll_Flags_Copy_All_P2
-	TeleportTableEntry	Camera_Difference,        Camera_Difference_P2
-	TeleportTableEntry	Sonic_Pos_Record_Buf,     Tails_Pos_Record_Buf
-teleport_swap_table_end:
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; '?' Monitor
@@ -27270,6 +27086,7 @@ JmpTo_BuildHUD_P2 ; JmpTo
 ; ----------------------------------------------------------------------------
 ; Pseudo-object that manages where rings are placed onscreen
 ; as you move through the level, and otherwise updates them.
+; This is a version ported from Sonic 3 & Knuckles
 ; ----------------------------------------------------------------------------
 
 ; loc_16F88:
@@ -27281,33 +27098,36 @@ RingsManager:
 ; ===========================================================================
 ; off_16F96:
 RingsManager_States:	offsetTable
-	offsetTableEntry.w RingsManager_Init	;   0
-	offsetTableEntry.w RingsManager_Main	;   2
+	offsetTableEntry.w RingsManager_Init
+	offsetTableEntry.w RingsManager_Main
 ; ===========================================================================
 ; loc_16F9A:
 RingsManager_Init:
 	addq.b	#2,(Rings_manager_routine).w ; => RingsManager_Main
 	bsr.w	RingsManager_Setup	; perform initial setup
-	lea	(Ring_Positions).w,a1
+	movea.l	(Ring_start_addr_ROM).w,a1
+	lea	(Ring_Positions).w,a2
 	move.w	(Camera_X_pos).w,d4
 	subq.w	#8,d4
 	bhi.s	+
 	moveq	#1,d4	; no negative values allowed
 	bra.s	+
 -
-	lea	6(a1),a1	; load next ring
+	addq.w	#4,a1	; load next ring 
+	addq.w	#2,a2
 +
-	cmp.w	2(a1),d4	; is the X pos of the ring < camera X pos?
+	cmp.w	(a1),d4	; is the X pos of the ring < camera X pos?
 	bhi.s	-		; if it is, check next ring
-	move.w	a1,(Ring_start_addr).w	; set start addresses
+	move.l	a1,(Ring_start_addr_ROM).w	; set start addresses in both ROM and RAM
+	move.w	a2,(Ring_start_addr_RAM).w
 	addi.w	#320+16,d4	; advance by a screen
 	bra.s	+
 -
-	lea	6(a1),a1	; load next ring
+	addq.w	#4,a1	; load next ring
 +
-	cmp.w	2(a1),d4	; is the X pos of the ring < camera X + 336?
-	bhi.s	-		; if it is, check next ring
-	move.w	a1,(Ring_end_addr).w	; set end addresses
+	cmp.w	(a1),d4		; is the X pos of the ring < camera X + 336?
+	bhi.s	-	; if it is, check next ring
+	move.l	a1,(Ring_end_addr_ROM).w	; set end addresses
 	rts
 ; ===========================================================================
 ; loc_16FDE:
@@ -27331,41 +27151,44 @@ RingsManager_Main:
 	subq.w	#1,(Ring_consumption_table).w	; subtract count
 +	dbf	d1,-	; repeat for all rings in table
 +
-	; update ring start and end addresses
-	movea.w	(Ring_start_addr).w,a1
+	; update ring start addresses
+	movea.l	(Ring_start_addr_ROM).w,a1
+	movea.w	(Ring_start_addr_RAM).w,a2
 	move.w	(Camera_X_pos).w,d4
 	subq.w	#8,d4
 	bhi.s	+
 	moveq	#1,d4
 	bra.s	+
 -
-	lea	6(a1),a1
+	addq.w	#4,a1
+	addq.w	#2,a2
 +
-	cmp.w	2(a1),d4
+	cmp.w	(a1),d4
 	bhi.s	-
 	bra.s	+
 -
-	subq.w	#6,a1
+	subq.w	#4,a1
+	subq.w	#2,a2
 +
 	cmp.w	-4(a1),d4
 	bls.s	-
-	move.w	a1,(Ring_start_addr).w	; update start address
-
-	movea.w	(Ring_end_addr).w,a2
-	addi.w	#320+16,d4
+	move.l	a1,(Ring_start_addr_ROM).w	; update start addresses
+	move.w	a2,(Ring_start_addr_RAM).w
+	movea.l	(Ring_end_addr_ROM).w,a2	; set end address
+	addi.w	#320+16,d4	; advance by a screen
 	bra.s	+
 -
-	lea	6(a2),a2
+	addq.w	#4,a2
 +
-	cmp.w	2(a2),d4
+	cmp.w	(a2),d4
 	bhi.s	-
 	bra.s	+
 -
-	subq.w	#6,a2
+	subq.w	#4,a2
 +
 	cmp.w	-4(a2),d4
 	bls.s	-
-	move.w	a2,(Ring_end_addr).w	; update end address
+	move.l	a2,(Ring_end_addr_ROM).w	; update end address
 	rts
 
 ; ---------------------------------------------------------------------------
@@ -27376,15 +27199,30 @@ RingsManager_Main:
 
 ; loc_170BA:
 Touch_Rings:
-	movea.w	(Ring_start_addr).w,a1
-	movea.w	(Ring_end_addr).w,a2
+	cmpi.w	#$5A,invulnerable_time(a0)
+	bcc.w	Touch_Rings_Done
+	movea.l	(Ring_start_addr_ROM).w,a1	; load start and end addresses
+	movea.l	(Ring_end_addr_ROM).w,a2
 	cmpa.l	a1,a2	; are there no rings in this area?
 	beq.w	Touch_Rings_Done	; if so, return
-	cmpi.w	#$5A,invulnerable_time(a0)
-	bhs.w	Touch_Rings_Done
+	movea.w	(Ring_start_addr_RAM).w,a4	; load start address
+	btst	#5,status_secondary(a0)	; does character have a lightning shield?
+	beq.s	Touch_Rings_NoAttraction	; if not, branch
 	move.w	x_pos(a0),d2
 	move.w	y_pos(a0),d3
-	subi_.w	#8,d2	; assume X radius to be 8
+	subi.w	#$40,d2
+	subi.w	#$40,d3
+	move.w	#6,d1
+	move.w	#$C,d6
+	move.w	#$80,d4
+	move.w	#$80,d5
+	bra.s	Touch_Rings_Loop
+; ===========================================================================
+	
+Touch_Rings_NoAttraction:
+	move.w	x_pos(a0),d2	; get character's position
+	move.w	y_pos(a0),d3
+	subi.w	#8,d2	; assume X radius to be 8
 	moveq	#0,d5
 	move.b	y_radius(a0),d5
 	subq.b	#3,d5
@@ -27397,51 +27235,55 @@ Touch_Rings:
 	; Sonic 1, where Sonic's ducking animation only had one frame.
 	cmpi.b	#$4D,mapping_frame(a0)	; is Sonic ducking?
     endif
-	bne.s	+				; if not, branch
+	bne.s	+	; if you're not ducking, branch
 	addi.w	#$C,d3
 	moveq	#$A,d5
 +
 	move.w	#6,d1	; set ring radius
-	move.w	#12,d6	; set ring diameter
-	move.w	#16,d4	; set Sonic's X diameter
+	move.w	#$C,d6	; set ring diameter
+	move.w	#$10,d4	; set character's X diameter
 	add.w	d5,d5	; set Y diameter
 ; loc_17112:
 Touch_Rings_Loop:
-	tst.w	(a1)		; has this ring already been collided with?
+	tst.w	(a4)	; has this ring already been collided with?
 	bne.w	Touch_NextRing	; if it has, branch
-	move.w	2(a1),d0	; get ring X pos
+	move.w	(a1),d0		; get ring X pos
 	sub.w	d1,d0		; get ring left edge X pos
-	sub.w	d2,d0		; subtract Sonic's left edge X pos
-	bcc.s	+		; if Sonic's to the left of the ring, branch
+	sub.w	d2,d0		; subtract character's left edge X pos
+	bcc.s	+		; if character's to the left of the ring, branch
 	add.w	d6,d0		; add ring diameter
-	bcs.s	++		; if Sonic's colliding, branch
+	bcs.s	++		; if character's colliding, branch
 	bra.w	Touch_NextRing	; otherwise, test next ring
 +
-	cmp.w	d4,d0		; has Sonic crossed the ring?
-	bhi.w	Touch_NextRing	; if he has, branch
+	cmp.w	d4,d0		; has character crossed the ring?
+	bhi.w	Touch_NextRing	; if they have, branch
 +
-	move.w	4(a1),d0	; get ring Y pos
+	move.w	2(a1),d0	; get ring Y pos
 	sub.w	d1,d0		; get ring top edge pos
-	sub.w	d3,d0		; subtract Sonic's top edge pos
-	bcc.s	+		; if Sonic's above the ring, branch
+	sub.w	d3,d0		; subtract character's top edge pos
+	bcc.s	+		; if character's above the ring, branch
 	add.w	d6,d0		; add ring diameter
-	bcs.s	++		; if Sonic's colliding, branch
+	bcs.s	++		; if character's colliding, branch
 	bra.w	Touch_NextRing	; otherwise, test next ring
 +
-	cmp.w	d5,d0		; has Sonic crossed the ring?
-	bhi.w	Touch_NextRing	; if he has, branch
+	cmp.w	d5,d0		; has character crossed the ring?
+	bhi.w	Touch_NextRing	; if they have, branch
 +
-	move.w	#$604,(a1)	; set frame and destruction timer
+	btst	#5,status_secondary(a0)	; does character have a lightning shield?
+	bne.s	AttractRing			; if so, attract the ring towards the player	
+-
+	move.w	#$604,(a4)		; set frame and destruction timer
 	bsr.s	Touch_ConsumeRing
 	lea	(Ring_consumption_table+2).w,a3
 
 -	tst.w	(a3)+		; is this slot free?
 	bne.s	-		; if not, repeat until you find one
-	move.w	a1,-(a3)	; set ring address
+	move.w	a4,-(a3)	; set ring address
 	addq.w	#1,(Ring_consumption_table).w	; increase count
 ; loc_1715C:
 Touch_NextRing:
-	lea	6(a1),a1
+	addq.w	#4,a1
+	addq.w	#2,a4
 	cmpa.l	a1,a2		; are we at the last ring for this area?
 	bne.w	Touch_Rings_Loop	; if not, branch
 ; return_17166:
@@ -27452,6 +27294,56 @@ Touch_Rings_Done:
 Touch_ConsumeRing:
 	subq.w	#1,(Perfect_rings_left).w
 	bra.w	CollectRing_Sonic
+; ===========================================================================
+AttractRing:
+	movea.l	a1,a3
+	jsr	(SingleObjLoad).l
+	bne.w	AttractRing_NoFreeSlot
+	move.b	#$4C,(a1)
+	move.w	(a3),x_pos(a1)
+	move.w	2(a3),y_pos(a1)
+	move.w	a0,parent(a1)
+	move.w	#-1,(a4)
+	rts	
+; ===========================================================================
+AttractRing_NoFreeSlot:
+	movea.l	a3,a1
+	bra.s	-
+
+; ---------------------------------------------------------------------------
+; Subroutine to perform initial rings manager setup
+; ---------------------------------------------------------------------------
+
+; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
+
+; loc_172A4:
+RingsManager_Setup:
+	clearRAM Ring_Positions,Ring_Positions_End
+	; d0 = 0
+	lea	(Ring_consumption_table).w,a1
+	; in the Sonic 2 version a coding error is present that causes only half of the Ring_consumption_table to be cleared.
+	move.w	#bytesToLcnt(Ring_consumption_table_End-Ring_consumption_table),d1
+-	move.l	d0,(a1)+
+	dbf	d1,-
+
+	move.w	(Current_ZoneAndAct).w,d0	; get the current zone and act
+	ror.b	#1,d0
+	lsr.w	#5,d0
+	lea	(Off_Rings).l,a1
+	movea.l	(a1,d0.w),a1
+	move.l	a1,(Ring_start_addr_ROM).w
+	addq.w	#4,a1
+	moveq	#0,d5
+	move.w	#Rings_Space-1,d0	
+-
+	tst.l	(a1)+	; get the next ring
+	bmi.s	+		; if there's no more, carry on
+	addq.w	#1,d5	; increment perfect counter
+	dbf	d0,-
++
+	move.w	d5,(Perfect_rings_left).w	; set the perfect ring amount for the act
+	move.w	#0,(Perfect_rings_flag).w	; clear the perfect ring flag
+	rts
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to draw on-screen rings
@@ -27461,20 +27353,20 @@ Touch_ConsumeRing:
 
 ; loc_17178:
 BuildRings:
-	movea.w	(Ring_start_addr).w,a0
-	movea.w	(Ring_end_addr).w,a4
-	cmpa.l	a0,a4		; are there any rings on-screen?
-	beq.s	BuildRings_End	; if there aren't, branch ; AF: save slightly on CPU cycles by inverting this branch
-	lea	(Camera_X_pos).w,a3
+	movea.l	(Ring_start_addr_ROM).w,a0
+	move.l	(Ring_end_addr_ROM).w,d7
+	sub.l	a0,d7		; are there any rings on-screen?
+	beq.s	BuildRings_End		; if there aren't, branch
+	movea.w	(Ring_start_addr_RAM).w,a4	; load start address
+	lea	(Camera_X_pos).w,a3		; load camera x position
 
-; loc_1718A:
 BuildRings_Loop:
-	tst.w	(a0)		; has this ring been consumed?
-	bmi.s	BuildRings_NextRing	; if it has, branch
-	move.w	2(a0),d3	; get ring X pos
+	tst.w	(a4)+		; has this ring been consumed?
+	bmi.w	BuildRings_NextRing	; if it has, branch
+	move.w	(a0),d3		; get ring X pos
 	sub.w	(a3),d3		; subtract camera X pos
 	addi.w	#128,d3		; screen top is 128x128 not 0x0
-	move.w	4(a0),d2	; get ring Y pos
+	move.w	2(a0),d2	; get ring Y pos
 	sub.w	4(a3),d2	; subtract camera Y pos
 	addi_.w	#8,d2			; AF: these lines are swapped to prevent rings from disappearing
 	andi.w	#$7FF,d2		; when they go halfway off the top of the screen
@@ -27483,7 +27375,7 @@ BuildRings_Loop:
 	addi.w	#128-8,d2
 	lea	(MapUnc_Rings).l,a1
 	moveq	#0,d1
-	move.b	1(a0),d1	; get ring frame
+	move.b	-1(a4),d1	; get ring frame
 	bne.s	+		; if this ring is using a specific frame, branch
 	move.b	(Rings_anim_frame).w,d1	; use global frame
 +
@@ -27507,113 +27399,16 @@ BuildRings_Loop:
 	move.w	d0,(a2)+	; set X pos
 ; loc_171EC:
 BuildRings_NextRing:
-	lea	6(a0),a0
-	cmpa.l	a0,a4
+	addq.w	#4,a0
+	subq.w	#4,d7
 	bne.w	BuildRings_Loop
 
 BuildRings_End:
 	rts
-
+; ===========================================================================
 ; ---------------------------------------------------------------------------
-; Subroutine to perform initial rings manager setup
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_172A4:
-RingsManager_Setup:
-	clearRAM Ring_Positions,Ring_Positions_End
-	; d0 = 0
-	lea	(Ring_consumption_table).w,a1
-
-    if fixBugs
-	move.w	#bytesToLcnt(Ring_consumption_table_End-Ring_consumption_table),d1
-    else
-	; Coding error, that '-$40' shouldn't be there: only half of 'Ring_consumption_table' is cleared.
-	move.w	#bytesToLcnt(Ring_consumption_table_End-Ring_consumption_table-$40),d1
-    endif
--	move.l	d0,(a1)+
-	dbf	d1,-
-
-	moveq	#0,d5
-	moveq	#0,d0
-	move.w	(Current_ZoneAndAct).w,d0
-	ror.b	#1,d0
-	lsr.w	#5,d0
-	lea	(Off_Rings).l,a1
-	movea.l	(a1,d0.w),a1
-	lea	(Ring_Positions+6).w,a2	; first ring is left blank
-; loc_172E0:
-RingsMgr_NextRowOrCol:
-	move.w	(a1)+,d2	; is this the last ring?
-	bmi.s	RingsMgr_SortRings	; if it is, sort the rings
-	move.w	(a1)+,d3	; is this a column of rings?
-	bmi.s	RingsMgr_RingCol	; if it is, branch
-	move.w	d3,d0
-	rol.w	#4,d0
-	andi.w	#7,d0		; store number of rings
-	andi.w	#$FFF,d3	; store Y pos
-; loc_172F4:
-RingsMgr_NextRingInRow:
-	move.w	#0,(a2)+	; set initial status
-	move.w	d2,(a2)+	; set X pos
-	move.w	d3,(a2)+	; set Y pos
-	addi.w	#$18,d2		; increment X pos
-	addq.w	#1,d5		; increment perfect counter
-	dbf	d0,RingsMgr_NextRingInRow
-	bra.s	RingsMgr_NextRowOrCol
-; ===========================================================================
-; loc_17308:
-RingsMgr_RingCol:
-	move.w	d3,d0
-	rol.w	#4,d0
-	andi.w	#7,d0		; store number of rings
-	andi.w	#$FFF,d3	; store Y pos
-; loc_17314:
-RingsMgr_NextRingInCol:
-	move.w	#0,(a2)+	; set initial status
-	move.w	d2,(a2)+	; set X pos
-	move.w	d3,(a2)+	; set Y pos
-	addi.w	#$18,d3		; increment Y pos
-	addq.w	#1,d5		; increment perfect counter
-	dbf	d0,RingsMgr_NextRingInCol
-	bra.s	RingsMgr_NextRowOrCol
-; ===========================================================================
-; loc_17328:
-RingsMgr_SortRings:
-	move.w	d5,(Perfect_rings_left).w
-	move.w	#0,(Perfect_rings_flag).w	; no idea what this is
-	moveq	#-1,d0
-	move.l	d0,(a2)+	; set X pos of last ring to -1
-	lea	(Ring_Positions+2).w,a1	; X pos of first ring
-
-	move.w	#$FE,d3		; sort 255 rings
--	move.w	d3,d4
-	lea	6(a1),a2	; load next ring for comparison
-	move.w	(a1),d0		; get X pos of current ring
-
--	tst.w	(a2)		; is the next ring blank?
-	beq.s	+		; if it is, branch
-	cmp.w	(a2),d0		; is the X pos of current ring <= X pos of next ring?
-	bls.s	+		; if so, branch
-	move.l	(a1),d1		; otherwise, swap the rings
-	move.l	(a2),d0
-	move.l	d0,(a1)
-	move.l	d1,(a2)
-	swap	d0
-+
-	lea	6(a2),a2	; load next comparison ring
-	dbf	d4,-		; repeat
-
-	lea	6(a1),a1	; load next ring
-	dbf	d3,--		; repeat
-
-	rts
-; ===========================================================================
-
-; -------------------------------------------------------------------------------
 ; sprite mappings
-; -------------------------------------------------------------------------------
+; ---------------------------------------------------------------------------
 
 ; Custom mappings format. Compare to Obj25_MapUnc_12382.
 
@@ -27679,6 +27474,7 @@ MapUnc_Rings:
 	dc.w make_block_tile_2p(10,0,1,0,0)
 	dc.w -8
 
+
     if ~~removeJmpTos
 	align 4
     endif
@@ -27725,7 +27521,6 @@ SpecialCNZBumpers_Init:
 	cmp.w	bumper_x(a1),d4
 	bhi.s	-
 	move.l	a1,(CNZ_Visible_bumpers_start).w
-	move.l	a1,(CNZ_Visible_bumpers_start_P2).w
 	addi.w	#$150,d4
 	bra.s	+
 ; ===========================================================================
@@ -27735,7 +27530,6 @@ SpecialCNZBumpers_Init:
 	cmp.w	bumper_x(a1),d4
 	bhi.s	-
 	move.l	a1,(CNZ_Visible_bumpers_end).w
-	move.l	a1,(CNZ_Visible_bumpers_end_P2).w
 	move.b	#1,(CNZ_Bumper_UnkFlag).w
 	rts
 ; ===========================================================================
