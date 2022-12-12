@@ -2472,15 +2472,8 @@ ArtTile_HUD_Score                     = ArtTile_HUD_Score_E + 2
 ArtTile_HUD_Rings                     = ArtTile_ArtNem_HUD + $30
 ArtTile_HUD_Minutes                   = ArtTile_ArtNem_HUD + $28
 ArtTile_HUD_Seconds                   = ArtTile_HUD_Minutes + 4
-ArtTile_ArtUnc_2p_life_counter        = ArtTile_ArtNem_HUD + $2A
-ArtTile_ArtUnc_2p_life_counter_lives  = ArtTile_ArtUnc_2p_life_counter + 9
 ArtTile_ArtNem_life_counter           = ArtTile_ArtNem_HUD + $10A
 ArtTile_ArtNem_life_counter_lives     = ArtTile_ArtNem_life_counter + 9
-
-; ---------------------------------------------------------------------------
-; 2p-mode HUD.
-ArtTile_Art_HUD_Text_2P               = ArtTile_ArtNem_HUD
-ArtTile_Art_HUD_Numbers_2P            = ArtTile_HUD_Score_E
 
 ; ---------------------------------------------------------------------------
 ; Unused objects, objects with mappings never loaded, objects with
